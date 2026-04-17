@@ -3,195 +3,196 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>LEEPLUS Check-in TEST</title>
+  <title>เช็กอินเข้างาน</title>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f6f7fb;
-      color: #111827;
+      background: #f7f7f7;
+      color: #111;
     }
     .wrap {
-      max-width: 720px;
+      max-width: 520px;
       margin: 0 auto;
-      padding: 16px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
     .card {
+      width: 100%;
       background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.08);
-      margin-bottom: 16px;
+      border-radius: 18px;
+      padding: 24px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
     }
     h1 {
-      margin: 0 0 12px;
-      font-size: 24px;
+      margin: 0 0 8px;
+      font-size: 28px;
+      text-align: center;
     }
-    .muted {
-      color: #6b7280;
-      font-size: 14px;
+    .sub {
+      text-align: center;
+      color: #666;
+      font-size: 15px;
+      margin-bottom: 20px;
+      line-height: 1.5;
     }
     input, button {
       width: 100%;
-      min-height: 46px;
-      border-radius: 12px;
-      border: 1px solid #d1d5db;
-      padding: 10px 12px;
-      font-size: 16px;
+      min-height: 52px;
+      border-radius: 14px;
+      font-size: 18px;
+    }
+    input {
+      border: 1px solid #ddd;
+      padding: 0 14px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    input:focus {
+      border-color: #facc15;
+      box-shadow: 0 0 0 3px rgba(250,204,21,.18);
     }
     button {
       border: 0;
       background: #facc15;
-      color: #111827;
+      color: #111;
       font-weight: 700;
       cursor: pointer;
     }
     button:disabled {
-      background: #d1d5db;
+      background: #ddd;
+      color: #777;
       cursor: not-allowed;
     }
-    .row {
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
+    .msg {
+      margin-top: 14px;
+      font-size: 15px;
+      text-align: center;
+      min-height: 22px;
     }
-    .pill {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      background: #e5e7eb;
+    .err { color: #c62828; }
+    .ok { color: #137333; }
+
+    .list {
+      margin-top: 18px;
     }
-    .vip {
-      background: #fde68a;
-    }
-    .ok {
-      color: #047857;
-      font-weight: 700;
-    }
-    .err {
-      color: #b91c1c;
-      font-weight: 700;
-    }
-    .attendee {
-      border: 1px solid #e5e7eb;
+    .item {
+      border: 1px solid #e5e5e5;
       border-radius: 14px;
       padding: 14px;
-      margin-top: 12px;
+      margin-top: 10px;
     }
-    .attendee h3 {
-      margin: 0 0 8px;
+    .name {
       font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
     .meta {
       font-size: 14px;
-      color: #4b5563;
-      line-height: 1.6;
+      color: #666;
+      line-height: 1.5;
     }
-    .topbar {
-      position: sticky;
-      top: 0;
-      background: #111827;
-      color: #fff;
-      padding: 14px 16px;
-      z-index: 10;
+    .vip {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fff4c2;
+      font-size: 12px;
+      font-weight: 700;
     }
-    .summary {
+    .item button {
+      margin-top: 12px;
+      min-height: 46px;
+      font-size: 16px;
+    }
+
+    .success {
+      text-align: center;
+      padding: 14px 0 4px;
+    }
+    .successIcon {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: #e8f5e9;
+      color: #137333;
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      margin: 0 auto 16px;
+      font-weight: 700;
     }
-    .box {
-      background: #f3f4f6;
-      border-radius: 12px;
-      padding: 10px 12px;
-      min-width: 120px;
+    .success h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+    .success p {
+      margin: 0;
+      color: #666;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    .backBtn {
+      margin-top: 20px;
+      background: #111;
+      color: #fff;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <strong>LEEPLUS Onsite Check-in TEST</strong>
-  </div>
-
   <div class="wrap">
     <div class="card">
-      <h1>ค้นหาผู้ลงทะเบียน</h1>
-      <div class="muted">กรอกเบอร์โทรลูกค้า เพื่อดึงรายชื่อทั้งหมดในเบอร์นั้น</div>
 
-      <div class="row">
-        <input id="phone" type="tel" placeholder="เช่น 0622729509" />
-        <input id="staff" type="text" placeholder="ชื่อ staff เช่น Smileทีมหน้าโต๊ะ" />
-        <input id="staffToken" type="password" placeholder="Staff token" value="LEEPLUS_CHECKIN_2026" />
+      <div id="searchView">
+        <h1>เช็กอินเข้างาน</h1>
+        <div class="sub">
+          กรุณากรอกเบอร์โทรศัพท์ที่ใช้ลงทะเบียน
+        </div>
+
+        <input id="phone" type="tel" inputmode="numeric" placeholder="เบอร์โทรศัพท์" />
         <button id="searchBtn">ค้นหา</button>
+
+        <div id="msg" class="msg"></div>
+        <div id="results" class="list"></div>
       </div>
 
-      <div id="msg" style="margin-top:12px;"></div>
-      <div id="summary"></div>
-    </div>
+      <div id="successView" class="hidden">
+        <div class="success">
+          <div class="successIcon">✓</div>
+          <h2>เช็กอินเรียบร้อย</h2>
+          <p id="successText">ขอบคุณที่ลงทะเบียนเข้าร่วมงาน</p>
+          <button class="backBtn" onclick="resetPage()">กลับหน้าแรก</button>
+        </div>
+      </div>
 
-    <div id="results"></div>
+    </div>
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzhAcFHWotDgy8fobhhTbYJ0p7UCnRBbp7xi9BC6gZj1PpygZOjJ4OH92l5aIhA4WeyNg/exec";
+    const STAFF_TOKEN = "LEEPLUS_CHECKIN_2026";
+    const STAFF_NAME = "SELF_CHECKIN";
 
     const phoneEl = document.getElementById("phone");
-    const staffEl = document.getElementById("staff");
-    const staffTokenEl = document.getElementById("staffToken");
     const searchBtn = document.getElementById("searchBtn");
     const msgEl = document.getElementById("msg");
-    const summaryEl = document.getElementById("summary");
     const resultsEl = document.getElementById("results");
+    const searchView = document.getElementById("searchView");
+    const successView = document.getElementById("successView");
+    const successText = document.getElementById("successText");
 
     function normalizePhone(value) {
       return String(value || "").replace(/[^\d]/g, "");
-    }
-
-    function setMsg(text, type = "") {
-      msgEl.className = type;
-      msgEl.textContent = text || "";
-    }
-
-    function renderSummary(data) {
-      summaryEl.innerHTML = `
-        <div class="summary">
-          <div class="box"><strong>เบอร์</strong><br>${data.phone || "-"}</div>
-          <div class="box"><strong>ทั้งหมด</strong><br>${data.total || 0}</div>
-          <div class="box"><strong>เช็กอินแล้ว</strong><br>${data.checked_in_count || 0}</div>
-          <div class="box"><strong>คงเหลือ</strong><br>${(data.total || 0) - (data.checked_in_count || 0)}</div>
-        </div>
-      `;
-    }
-
-    function attendeeCard(item) {
-      const checked = item.checked_in;
-      const tagHtml = item.tag ? `<span class="pill vip">${item.tag}</span>` : "";
-      const statusHtml = checked
-        ? `<span class="ok">เช็กอินแล้ว ${item.checkin_time ? `(${item.checkin_time})` : ""}</span>`
-        : `<span>พร้อมเช็กอิน</span>`;
-
-      return `
-        <div class="card attendee">
-          <h3>${escapeHtml(item.final_name || "-")} ${tagHtml}</h3>
-          <div class="meta">
-            ชื่อในระบบ: ${escapeHtml(item.name || "-")}<br>
-            ชื่อแสดง: ${escapeHtml(item.display_name || "-")}<br>
-            เบอร์: ${escapeHtml(item.phone || "-")}<br>
-            เวลาลงทะเบียน: ${escapeHtml(item.reg_time || "-")}<br>
-            แถวข้อมูล: ${escapeHtml(String(item.row || "-"))}<br>
-            สถานะ: ${statusHtml}
-          </div>
-          <div style="margin-top:12px;">
-            <button ${checked ? "disabled" : ""} onclick='checkinOne(${JSON.stringify(item)})'>
-              ${checked ? "เช็กอินแล้ว" : "เช็กอิน"}
-            </button>
-          </div>
-        </div>
-      `;
     }
 
     function escapeHtml(str) {
@@ -203,16 +204,56 @@
         .replace(/'/g, "&#039;");
     }
 
+    function setMsg(text, type = "") {
+      msgEl.className = "msg " + type;
+      msgEl.textContent = text || "";
+    }
+
+    function resetPage() {
+      successView.classList.add("hidden");
+      searchView.classList.remove("hidden");
+      phoneEl.value = "";
+      resultsEl.innerHTML = "";
+      setMsg("");
+      phoneEl.focus();
+    }
+
+    function showSuccess(name) {
+      successText.textContent = `คุณ ${name} เช็กอินเรียบร้อยแล้ว`;
+      searchView.classList.add("hidden");
+      successView.classList.remove("hidden");
+    }
+
+    function renderOne(item) {
+      const vipHtml = item.tag ? `<div class="vip">${escapeHtml(item.tag)}</div>` : "";
+      const checkedHtml = item.checked_in
+        ? `<div class="meta" style="color:#137333;margin-top:8px;">เช็กอินแล้ว ${item.checkin_time ? `(${escapeHtml(item.checkin_time)})` : ""}</div>`
+        : "";
+
+      return `
+        <div class="item">
+          <div class="name">${escapeHtml(item.final_name || "-")}</div>
+          <div class="meta">
+            เบอร์: ${escapeHtml(item.phone || "-")}
+          </div>
+          ${vipHtml}
+          ${checkedHtml}
+          <button ${item.checked_in ? "disabled" : ""} onclick='checkinOne(${JSON.stringify(item)})'>
+            ${item.checked_in ? "เช็กอินแล้ว" : "เช็กอิน"}
+          </button>
+        </div>
+      `;
+    }
+
     async function searchAttendees() {
       const phone = normalizePhone(phoneEl.value);
       if (!phone) {
-        setMsg("กรุณากรอกเบอร์โทร", "err");
+        setMsg("กรุณากรอกเบอร์โทรศัพท์", "err");
         return;
       }
 
       setMsg("กำลังค้นหา...");
       resultsEl.innerHTML = "";
-      summaryEl.innerHTML = "";
 
       const url = `${API_URL}?action=search_attendees&phone=${encodeURIComponent(phone)}`;
 
@@ -225,39 +266,32 @@
           return;
         }
 
-        renderSummary(data);
-
         if (!data.attendees || !data.attendees.length) {
-          setMsg("ไม่พบข้อมูลในเบอร์นี้", "err");
+          setMsg("ไม่พบข้อมูลลงทะเบียน", "err");
           return;
         }
 
-        setMsg(`พบ ${data.attendees.length} รายการ`, "ok");
-        resultsEl.innerHTML = data.attendees.map(attendeeCard).join("");
+        setMsg("");
+
+        if (data.attendees.length === 1) {
+          resultsEl.innerHTML = renderOne(data.attendees[0]);
+          return;
+        }
+
+        resultsEl.innerHTML = data.attendees.map(renderOne).join("");
       } catch (err) {
         setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
       }
     }
 
     async function checkinOne(item) {
-      const staff = staffEl.value.trim() || "STAFF";
-      const staffToken = staffTokenEl.value.trim();
-
-      if (!staffToken) {
-        alert("กรุณาใส่ Staff token");
-        return;
-      }
-
-      const ok = confirm(`ยืนยันเช็กอิน: ${item.final_name}?`);
-      if (!ok) return;
-
       const url =
         `${API_URL}?action=checkin_attendee` +
         `&phone=${encodeURIComponent(item.phone)}` +
         `&name=${encodeURIComponent(item.final_name)}` +
         `&row=${encodeURIComponent(item.row)}` +
-        `&staff=${encodeURIComponent(staff)}` +
-        `&staff_token=${encodeURIComponent(staffToken)}`;
+        `&staff=${encodeURIComponent(STAFF_NAME)}` +
+        `&staff_token=${encodeURIComponent(STAFF_TOKEN)}`;
 
       try {
         const res = await fetch(url);
@@ -268,8 +302,7 @@
           return;
         }
 
-        alert("เช็กอินสำเร็จ");
-        searchAttendees();
+        showSuccess(item.final_name);
       } catch (err) {
         alert("ระบบเช็กอินมีปัญหา");
       }
