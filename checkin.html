@@ -6,146 +6,252 @@
   <title>เช็กอินเข้างาน</title>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f7f7f7;
+      background: #f3f3f3;
       color: #111;
     }
+
     .wrap {
-      max-width: 520px;
+      max-width: 540px;
       margin: 0 auto;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 12px;
     }
+
     .card {
       width: 100%;
       background: #fff;
-      border-radius: 18px;
-      padding: 24px 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      border-radius: 20px;
+      padding: 20px 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
     }
+
     h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
+      margin: 0 0 6px;
+      font-size: 30px;
+      font-weight: 800;
       text-align: center;
+      line-height: 1.2;
     }
+
     .sub {
       text-align: center;
       color: #666;
       font-size: 15px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       line-height: 1.5;
     }
+
     input, button {
       width: 100%;
-      min-height: 52px;
       border-radius: 14px;
       font-size: 18px;
     }
+
     input {
+      min-height: 54px;
       border: 1px solid #ddd;
-      padding: 0 14px;
-      margin-bottom: 12px;
+      padding: 0 16px;
       outline: none;
+      background: #fff;
     }
+
     input:focus {
       border-color: #facc15;
       box-shadow: 0 0 0 3px rgba(250,204,21,.18);
     }
+
     button {
+      min-height: 48px;
       border: 0;
       background: #facc15;
       color: #111;
       font-weight: 700;
       cursor: pointer;
     }
+
     button:disabled {
-      background: #ddd;
-      color: #777;
       cursor: not-allowed;
     }
+
+    .searchBtn {
+      margin-top: 12px;
+      min-height: 50px;
+      font-size: 18px;
+    }
+
     .msg {
       margin-top: 14px;
-      font-size: 15px;
-      text-align: center;
       min-height: 22px;
+      text-align: center;
+      font-size: 15px;
     }
+
     .err { color: #c62828; }
     .ok { color: #137333; }
 
     .list {
       margin-top: 18px;
     }
+
     .item {
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 10px;
+      border: 1px solid #e3e3e3;
+      border-radius: 18px;
+      padding: 16px 14px;
+      margin-top: 12px;
+      background: #fff;
     }
+
+    .item.checked {
+      background: #f8faf8;
+      border-color: #d7eadb;
+    }
+
     .name {
       font-size: 18px;
       font-weight: 700;
-      margin-bottom: 6px;
+      line-height: 1.45;
+      word-break: break-word;
+      margin-bottom: 8px;
     }
+
     .meta {
       font-size: 14px;
       color: #666;
-      line-height: 1.5;
+      line-height: 1.55;
     }
-    .vip {
-      display: inline-block;
-      margin-top: 8px;
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
       padding: 4px 10px;
       border-radius: 999px;
-      background: #fff4c2;
       font-size: 12px;
       font-weight: 700;
     }
-    .item button {
-      margin-top: 12px;
-      min-height: 46px;
-      font-size: 16px;
+
+    .badge-vip {
+      background: #fff4c2;
+      color: #5d4600;
+    }
+
+    .badge-checked {
+      background: #e8f5e9;
+      color: #137333;
+    }
+
+    .checkedTime {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #137333;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .itemBtn {
+      margin-top: 14px;
+      min-height: 48px;
+      font-size: 18px;
+    }
+
+    .itemBtn.checkedBtn {
+      background: #101010;
+      color: #fff;
     }
 
     .success {
       text-align: center;
-      padding: 14px 0 4px;
+      padding: 10px 4px 6px;
     }
+
     .successIcon {
-      width: 84px;
-      height: 84px;
+      width: 86px;
+      height: 86px;
       border-radius: 50%;
-      background: #e8f5e9;
-      color: #137333;
+      background: #e7f1e7;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 42px;
       margin: 0 auto 16px;
+      font-size: 48px;
       font-weight: 700;
+      color: #137333;
     }
-    .success h2 {
-      margin: 0 0 8px;
-      font-size: 28px;
-    }
-    .success p {
+
+    .successTitle {
       margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .successName {
+      margin-top: 16px;
+      font-size: 28px;
+      line-height: 1.35;
+      font-weight: 800;
+      color: #111;
+      word-break: break-word;
+    }
+
+    .successDesc {
+      margin-top: 14px;
+      font-size: 17px;
       color: #666;
       line-height: 1.6;
-      font-size: 16px;
     }
+
     .backBtn {
-      margin-top: 20px;
+      margin-top: 22px;
+      min-height: 50px;
       background: #111;
       color: #fff;
+      font-size: 18px;
     }
 
     .hidden {
       display: none;
+    }
+
+    @media (max-width: 480px) {
+      .wrap {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 18px 14px;
+        border-radius: 18px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .name {
+        font-size: 17px;
+      }
+
+      .successTitle {
+        font-size: 26px;
+      }
+
+      .successName {
+        font-size: 30px;
+      }
     }
   </style>
 </head>
@@ -155,12 +261,10 @@
 
       <div id="searchView">
         <h1>เช็กอินเข้างาน</h1>
-        <div class="sub">
-          กรุณากรอกเบอร์โทรศัพท์ที่ใช้ลงทะเบียน
-        </div>
+        <div class="sub">กรุณากรอกเบอร์โทรศัพท์ที่ใช้ลงทะเบียน</div>
 
         <input id="phone" type="tel" inputmode="numeric" placeholder="เบอร์โทรศัพท์" />
-        <button id="searchBtn">ค้นหา</button>
+        <button id="searchBtn" class="searchBtn">ค้นหา</button>
 
         <div id="msg" class="msg"></div>
         <div id="results" class="list"></div>
@@ -169,8 +273,9 @@
       <div id="successView" class="hidden">
         <div class="success">
           <div class="successIcon">✓</div>
-          <h2>เช็กอินเรียบร้อย</h2>
-          <p id="successText">ขอบคุณที่ลงทะเบียนเข้าร่วมงาน</p>
+          <h2 class="successTitle">เช็กอินเรียบร้อย</h2>
+          <div id="successName" class="successName">-</div>
+          <div class="successDesc">ขอบคุณสำหรับการลงทะเบียนเข้าร่วมงาน</div>
           <button class="backBtn" onclick="resetPage()">กลับหน้าแรก</button>
         </div>
       </div>
@@ -189,7 +294,7 @@
     const resultsEl = document.getElementById("results");
     const searchView = document.getElementById("searchView");
     const successView = document.getElementById("successView");
-    const successText = document.getElementById("successText");
+    const successNameEl = document.getElementById("successName");
 
     function normalizePhone(value) {
       return String(value || "").replace(/[^\d]/g, "");
@@ -216,30 +321,44 @@
       resultsEl.innerHTML = "";
       setMsg("");
       phoneEl.focus();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function showSuccess(name) {
-      successText.textContent = `คุณ ${name} เช็กอินเรียบร้อยแล้ว`;
+      successNameEl.textContent = name || "-";
       searchView.classList.add("hidden");
       successView.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function renderOne(item) {
-      const vipHtml = item.tag ? `<div class="vip">${escapeHtml(item.tag)}</div>` : "";
-      const checkedHtml = item.checked_in
-        ? `<div class="meta" style="color:#137333;margin-top:8px;">เช็กอินแล้ว ${item.checkin_time ? `(${escapeHtml(item.checkin_time)})` : ""}</div>`
+      const checked = !!item.checked_in;
+      const badges = [];
+
+      if (item.tag) {
+        badges.push(`<span class="badge badge-vip">${escapeHtml(item.tag)}</span>`);
+      }
+
+      if (checked) {
+        badges.push(`<span class="badge badge-checked">เช็กอินแล้ว</span>`);
+      }
+
+      const checkedTimeHtml = checked
+        ? `<div class="checkedTime">เช็กอินแล้ว${item.checkin_time ? ` เวลา ${escapeHtml(item.checkin_time)}` : ""}</div>`
         : "";
 
       return `
-        <div class="item">
+        <div class="item ${checked ? "checked" : ""}">
           <div class="name">${escapeHtml(item.final_name || "-")}</div>
-          <div class="meta">
-            เบอร์: ${escapeHtml(item.phone || "-")}
-          </div>
-          ${vipHtml}
-          ${checkedHtml}
-          <button ${item.checked_in ? "disabled" : ""} onclick='checkinOne(${JSON.stringify(item)})'>
-            ${item.checked_in ? "เช็กอินแล้ว" : "เช็กอิน"}
+          <div class="meta">เบอร์: ${escapeHtml(item.phone || "-")}</div>
+          ${badges.length ? `<div class="badges">${badges.join("")}</div>` : ""}
+          ${checkedTimeHtml}
+          <button
+            class="itemBtn ${checked ? "checkedBtn" : ""}"
+            ${checked ? "disabled" : ""}
+            onclick='checkinOne(${JSON.stringify(item)})'
+          >
+            ${checked ? "เช็กอินแล้ว" : "เช็กอิน"}
           </button>
         </div>
       `;
@@ -247,6 +366,7 @@
 
     async function searchAttendees() {
       const phone = normalizePhone(phoneEl.value);
+
       if (!phone) {
         setMsg("กรุณากรอกเบอร์โทรศัพท์", "err");
         return;
@@ -272,12 +392,6 @@
         }
 
         setMsg("");
-
-        if (data.attendees.length === 1) {
-          resultsEl.innerHTML = renderOne(data.attendees[0]);
-          return;
-        }
-
         resultsEl.innerHTML = data.attendees.map(renderOne).join("");
       } catch (err) {
         setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
