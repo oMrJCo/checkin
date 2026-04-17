@@ -15,7 +15,7 @@
     }
 
     .wrap {
-      max-width: 540px;
+      max-width: 640px;
       margin: 0 auto;
       min-height: 100vh;
       display: flex;
@@ -113,6 +113,16 @@
       border-color: #d7eadb;
     }
 
+    .item.notApproved {
+      background: #fffaf2;
+      border-color: #f6d7a8;
+    }
+
+    .item.rejected {
+      background: #fff5f5;
+      border-color: #f3c1c1;
+    }
+
     .name {
       font-size: 18px;
       font-weight: 700;
@@ -154,12 +164,84 @@
       color: #137333;
     }
 
+    .badge-approved {
+      background: #e8f5e9;
+      color: #137333;
+    }
+
+    .badge-pending {
+      background: #fff4cc;
+      color: #9a6700;
+    }
+
+    .badge-rejected {
+      background: #fde8e8;
+      color: #c62828;
+    }
+
     .checkedTime {
       margin-top: 10px;
       font-size: 14px;
       color: #137333;
       font-weight: 700;
       line-height: 1.5;
+    }
+
+    .statusNote {
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .statusNote.pending {
+      color: #9a6700;
+    }
+
+    .statusNote.rejected {
+      color: #c62828;
+    }
+
+    .slipWrap {
+      margin-top: 14px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #ececec;
+      background: #fafafa;
+    }
+
+    .slipTitle {
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #555;
+      border-bottom: 1px solid #ececec;
+      background: #f8f8f8;
+    }
+
+    .slipImg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 320px;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .slipActions {
+      padding: 10px 12px 12px;
+      background: #fafafa;
+    }
+
+    .slipLink {
+      display: inline-block;
+      text-decoration: none;
+      background: #111827;
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .itemBtn {
@@ -171,6 +253,16 @@
     .itemBtn.checkedBtn {
       background: #101010;
       color: #fff;
+    }
+
+    .itemBtn.pendingBtn {
+      background: #e5e7eb;
+      color: #6b7280;
+    }
+
+    .itemBtn.rejectedBtn {
+      background: #fee2e2;
+      color: #991b1b;
     }
 
     .success {
@@ -331,13 +423,61 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
+    function getRegStatusBadge(item) {
+      const status = String(item.reg_status || "").toLowerCase();
+
+      if (status === "approved") {
+        return `<span class="badge badge-approved">อนุมัติแล้ว</span>`;
+      }
+      if (status === "pending") {
+        return `<span class="badge badge-pending">รอตรวจสอบ</span>`;
+      }
+      if (status === "rejected") {
+        return `<span class="badge badge-rejected">ไม่ผ่านการอนุมัติ</span>`;
+      }
+      return `<span class="badge badge-pending">ยังไม่ทราบสถานะ</span>`;
+    }
+
+    function getStatusNote(item) {
+      const status = String(item.reg_status || "").toLowerCase();
+
+      if (status === "pending") {
+        return `<div class="statusNote pending">ยังรอตรวจสอบ จึงยังไม่สามารถเช็กอินได้</div>`;
+      }
+      if (status === "rejected") {
+        return `<div class="statusNote rejected">รายการนี้ไม่ผ่านการอนุมัติ จึงไม่สามารถเช็กอินได้</div>`;
+      }
+      return "";
+    }
+
+    function getSlipHtml(item) {
+      if (!item.file_url) return "";
+
+      const safeUrl = escapeHtml(item.file_url);
+      const safeName = escapeHtml(item.file_name || "สลิปที่แนบ");
+
+      return `
+        <div class="slipWrap">
+          <div class="slipTitle">สลิปที่แนบมา: ${safeName}</div>
+          <img class="slipImg" src="${safeUrl}" alt="Slip" loading="lazy" onerror="this.style.display='none'">
+          <div class="slipActions">
+            <a class="slipLink" href="${safeUrl}" target="_blank" rel="noopener noreferrer">ดูสลิป</a>
+          </div>
+        </div>
+      `;
+    }
+
     function renderOne(item) {
       const checked = !!item.checked_in;
+      const regStatus = String(item.reg_status || "").toLowerCase();
+
       const badges = [];
 
       if (item.tag) {
         badges.push(`<span class="badge badge-vip">${escapeHtml(item.tag)}</span>`);
       }
+
+      badges.push(getRegStatusBadge(item));
 
       if (checked) {
         badges.push(`<span class="badge badge-checked">เช็กอินแล้ว</span>`);
@@ -347,18 +487,44 @@
         ? `<div class="checkedTime">เช็กอินแล้ว${item.checkin_time ? ` เวลา ${escapeHtml(item.checkin_time)}` : ""}</div>`
         : "";
 
+      let itemClass = "item";
+      if (checked) itemClass += " checked";
+      if (!checked && regStatus === "pending") itemClass += " notApproved";
+      if (!checked && regStatus === "rejected") itemClass += " rejected";
+
+      let btnText = "เช็กอิน";
+      let btnClass = "itemBtn";
+      let btnDisabled = "";
+
+      if (checked) {
+        btnText = "เช็กอินแล้ว";
+        btnClass += " checkedBtn";
+        btnDisabled = "disabled";
+      } else if (regStatus === "pending") {
+        btnText = "รอตรวจสอบ";
+        btnClass += " pendingBtn";
+        btnDisabled = "disabled";
+      } else if (regStatus === "rejected") {
+        btnText = "ไม่ผ่านการอนุมัติ";
+        btnClass += " rejectedBtn";
+        btnDisabled = "disabled";
+      }
+
       return `
-        <div class="item ${checked ? "checked" : ""}">
+        <div class="${itemClass}">
           <div class="name">${escapeHtml(item.final_name || "-")}</div>
           <div class="meta">เบอร์: ${escapeHtml(item.phone || "-")}</div>
+          ${item.reg_time ? `<div class="meta">เวลาลงทะเบียน: ${escapeHtml(item.reg_time)}</div>` : ""}
           ${badges.length ? `<div class="badges">${badges.join("")}</div>` : ""}
           ${checkedTimeHtml}
+          ${getStatusNote(item)}
+          ${getSlipHtml(item)}
           <button
-            class="itemBtn ${checked ? "checkedBtn" : ""}"
-            ${checked ? "disabled" : ""}
+            class="${btnClass}"
+            ${btnDisabled}
             onclick='checkinOne(${JSON.stringify(item)})'
           >
-            ${checked ? "เช็กอินแล้ว" : "เช็กอิน"}
+            ${btnText}
           </button>
         </div>
       `;
@@ -412,6 +578,18 @@
         const data = await res.json();
 
         if (!data.ok) {
+          if (data.duplicate) {
+            alert(`รายการนี้เช็กอินแล้ว${data.checkin_time ? "\nเวลา: " + data.checkin_time : ""}`);
+            await searchAttendees();
+            return;
+          }
+
+          if (data.not_approved) {
+            alert(data.message || "รายการนี้ยังไม่ผ่านการอนุมัติ");
+            await searchAttendees();
+            return;
+          }
+
           alert(data.message || "เช็กอินไม่สำเร็จ");
           return;
         }
