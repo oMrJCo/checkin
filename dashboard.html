@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Dashboard หน้างาน</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #111;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+    }
+    .sub {
+      color: #666;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .refreshBtn {
+      border: 0;
+      background: #111;
+      color: #fff;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    }
+    .metricLabel {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    .metricValue {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .panelTitle {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .latestList {
+      display: grid;
+      gap: 10px;
+    }
+    .latestItem {
+      border: 1px solid #ececec;
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+    }
+    .latestName {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .latestMeta {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+    .badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .vip {
+      background: #fff4c2;
+      color: #5d4600;
+    }
+    .empty {
+      color: #777;
+      font-size: 15px;
+      text-align: center;
+      padding: 24px 10px;
+    }
+    .footerNote {
+      margin-top: 14px;
+      text-align: center;
+      color: #777;
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .title {
+        font-size: 24px;
+      }
+      .metricValue {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="title">Dashboard หน้างาน</div>
+        <div class="sub">สรุปสถานะลงทะเบียนและเช็กอินแบบเรียลไทม์</div>
+      </div>
+      <button class="refreshBtn" id="refreshBtn">รีเฟรชข้อมูล</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="metricLabel">ลงทะเบียนทั้งหมด</div>
+        <div class="metricValue" id="totalRegistered">0</div>
+      </div>
+
+      <div class="card">
+        <div class="metricLabel">เช็กอินแล้ว</div>
+        <div class="metricValue" id="checkedIn">0</div>
+      </div>
+
+      <div class="card">
+        <div class="metricLabel">ยังไม่เช็กอิน</div>
+        <div class="metricValue" id="remaining">0</div>
+      </div>
+
+      <div class="card">
+        <div class="metricLabel">VIP ทั้งหมด</div>
+        <div class="metricValue" id="vipTotal">0</div>
+      </div>
+
+      <div class="card">
+        <div class="metricLabel">VIP เช็กอินแล้ว</div>
+        <div class="metricValue" id="vipCheckedIn">0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="panelTitle">รายการเช็กอินล่าสุด</div>
+      <div id="latestList" class="latestList"></div>
+    </div>
+
+    <div class="footerNote" id="lastUpdated">กำลังโหลดข้อมูล...</div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzhAcFHWotDgy8fobhhTbYJ0p7UCnRBbp7xi9BC6gZj1PpygZOjJ4OH92l5aIhA4WeyNg/exec";
+
+    const totalRegisteredEl = document.getElementById("totalRegistered");
+    const checkedInEl = document.getElementById("checkedIn");
+    const remainingEl = document.getElementById("remaining");
+    const vipTotalEl = document.getElementById("vipTotal");
+    const vipCheckedInEl = document.getElementById("vipCheckedIn");
+    const latestListEl = document.getElementById("latestList");
+    const lastUpdatedEl = document.getElementById("lastUpdated");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderLatest(items) {
+      if (!items || !items.length) {
+        latestListEl.innerHTML = `<div class="empty">ยังไม่มีข้อมูลการเช็กอิน</div>`;
+        return;
+      }
+
+      latestListEl.innerHTML = items.map(item => `
+        <div class="latestItem">
+          <div class="latestName">${escapeHtml(item.name || "-")}</div>
+          <div class="latestMeta">
+            เบอร์: ${escapeHtml(item.phone || "-")}<br>
+            เวลาเช็กอิน: ${escapeHtml(item.checkin_time || "-")}<br>
+            โดย: ${escapeHtml(item.checked_by || "-")}
+          </div>
+          ${item.tag === "VIP" ? `<span class="badge vip">VIP</span>` : ``}
+        </div>
+      `).join("");
+    }
+
+    async function loadDashboard() {
+      try {
+        refreshBtn.disabled = true;
+        refreshBtn.textContent = "กำลังโหลด...";
+
+        const res = await fetch(`${API_URL}?action=dashboard_summary`);
+        const data = await res.json();
+
+        if (!data.ok) {
+          latestListEl.innerHTML = `<div class="empty">โหลดข้อมูลไม่สำเร็จ</div>`;
+          lastUpdatedEl.textContent = "โหลดข้อมูลไม่สำเร็จ";
+          return;
+        }
+
+        totalRegisteredEl.textContent = data.summary.total_registered || 0;
+        checkedInEl.textContent = data.summary.checked_in || 0;
+        remainingEl.textContent = data.summary.remaining || 0;
+        vipTotalEl.textContent = data.summary.vip_total || 0;
+        vipCheckedInEl.textContent = data.summary.vip_checked_in || 0;
+
+        renderLatest(data.latest_checkins || []);
+        lastUpdatedEl.textContent = "อัปเดตล่าสุด: " + new Date().toLocaleString("th-TH");
+      } catch (err) {
+        latestListEl.innerHTML = `<div class="empty">เชื่อมต่อระบบไม่สำเร็จ</div>`;
+        lastUpdatedEl.textContent = "เชื่อมต่อระบบไม่สำเร็จ";
+      } finally {
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = "รีเฟรชข้อมูล";
+      }
+    }
+
+    refreshBtn.addEventListener("click", loadDashboard);
+
+    loadDashboard();
+    setInterval(loadDashboard, 15000);
+  </script>
+</body>
+</html>
