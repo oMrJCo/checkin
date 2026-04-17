@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>LEEPLUS Check-in TEST</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f6f7fb;
+      color: #111827;
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.08);
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 24px;
+    }
+    .muted {
+      color: #6b7280;
+      font-size: 14px;
+    }
+    input, button {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      padding: 10px 12px;
+      font-size: 16px;
+    }
+    button {
+      border: 0;
+      background: #facc15;
+      color: #111827;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+    }
+    .row {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #e5e7eb;
+    }
+    .vip {
+      background: #fde68a;
+    }
+    .ok {
+      color: #047857;
+      font-weight: 700;
+    }
+    .err {
+      color: #b91c1c;
+      font-weight: 700;
+    }
+    .attendee {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .attendee h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .meta {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: #111827;
+      color: #fff;
+      padding: 14px 16px;
+      z-index: 10;
+    }
+    .summary {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .box {
+      background: #f3f4f6;
+      border-radius: 12px;
+      padding: 10px 12px;
+      min-width: 120px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <strong>LEEPLUS Onsite Check-in TEST</strong>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <h1>ค้นหาผู้ลงทะเบียน</h1>
+      <div class="muted">กรอกเบอร์โทรลูกค้า เพื่อดึงรายชื่อทั้งหมดในเบอร์นั้น</div>
+
+      <div class="row">
+        <input id="phone" type="tel" placeholder="เช่น 0622729509" />
+        <input id="staff" type="text" placeholder="ชื่อ staff เช่น Smileทีมหน้าโต๊ะ" />
+        <input id="staffToken" type="password" placeholder="Staff token" value="LEEPLUS_CHECKIN_2026" />
+        <button id="searchBtn">ค้นหา</button>
+      </div>
+
+      <div id="msg" style="margin-top:12px;"></div>
+      <div id="summary"></div>
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzhAcFHWotDgy8fobhhTbYJ0p7UCnRBbp7xi9BC6gZj1PpygZOjJ4OH92l5aIhA4WeyNg/exec";
+
+    const phoneEl = document.getElementById("phone");
+    const staffEl = document.getElementById("staff");
+    const staffTokenEl = document.getElementById("staffToken");
+    const searchBtn = document.getElementById("searchBtn");
+    const msgEl = document.getElementById("msg");
+    const summaryEl = document.getElementById("summary");
+    const resultsEl = document.getElementById("results");
+
+    function normalizePhone(value) {
+      return String(value || "").replace(/[^\d]/g, "");
+    }
+
+    function setMsg(text, type = "") {
+      msgEl.className = type;
+      msgEl.textContent = text || "";
+    }
+
+    function renderSummary(data) {
+      summaryEl.innerHTML = `
+        <div class="summary">
+          <div class="box"><strong>เบอร์</strong><br>${data.phone || "-"}</div>
+          <div class="box"><strong>ทั้งหมด</strong><br>${data.total || 0}</div>
+          <div class="box"><strong>เช็กอินแล้ว</strong><br>${data.checked_in_count || 0}</div>
+          <div class="box"><strong>คงเหลือ</strong><br>${(data.total || 0) - (data.checked_in_count || 0)}</div>
+        </div>
+      `;
+    }
+
+    function attendeeCard(item) {
+      const checked = item.checked_in;
+      const tagHtml = item.tag ? `<span class="pill vip">${item.tag}</span>` : "";
+      const statusHtml = checked
+        ? `<span class="ok">เช็กอินแล้ว ${item.checkin_time ? `(${item.checkin_time})` : ""}</span>`
+        : `<span>พร้อมเช็กอิน</span>`;
+
+      return `
+        <div class="card attendee">
+          <h3>${escapeHtml(item.final_name || "-")} ${tagHtml}</h3>
+          <div class="meta">
+            ชื่อในระบบ: ${escapeHtml(item.name || "-")}<br>
+            ชื่อแสดง: ${escapeHtml(item.display_name || "-")}<br>
+            เบอร์: ${escapeHtml(item.phone || "-")}<br>
+            เวลาลงทะเบียน: ${escapeHtml(item.reg_time || "-")}<br>
+            แถวข้อมูล: ${escapeHtml(String(item.row || "-"))}<br>
+            สถานะ: ${statusHtml}
+          </div>
+          <div style="margin-top:12px;">
+            <button ${checked ? "disabled" : ""} onclick='checkinOne(${JSON.stringify(item)})'>
+              ${checked ? "เช็กอินแล้ว" : "เช็กอิน"}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function searchAttendees() {
+      const phone = normalizePhone(phoneEl.value);
+      if (!phone) {
+        setMsg("กรุณากรอกเบอร์โทร", "err");
+        return;
+      }
+
+      setMsg("กำลังค้นหา...");
+      resultsEl.innerHTML = "";
+      summaryEl.innerHTML = "";
+
+      const url = `${API_URL}?action=search_attendees&phone=${encodeURIComponent(phone)}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.ok) {
+          setMsg(data.message || "ค้นหาไม่สำเร็จ", "err");
+          return;
+        }
+
+        renderSummary(data);
+
+        if (!data.attendees || !data.attendees.length) {
+          setMsg("ไม่พบข้อมูลในเบอร์นี้", "err");
+          return;
+        }
+
+        setMsg(`พบ ${data.attendees.length} รายการ`, "ok");
+        resultsEl.innerHTML = data.attendees.map(attendeeCard).join("");
+      } catch (err) {
+        setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
+      }
+    }
+
+    async function checkinOne(item) {
+      const staff = staffEl.value.trim() || "STAFF";
+      const staffToken = staffTokenEl.value.trim();
+
+      if (!staffToken) {
+        alert("กรุณาใส่ Staff token");
+        return;
+      }
+
+      const ok = confirm(`ยืนยันเช็กอิน: ${item.final_name}?`);
+      if (!ok) return;
+
+      const url =
+        `${API_URL}?action=checkin_attendee` +
+        `&phone=${encodeURIComponent(item.phone)}` +
+        `&name=${encodeURIComponent(item.final_name)}` +
+        `&row=${encodeURIComponent(item.row)}` +
+        `&staff=${encodeURIComponent(staff)}` +
+        `&staff_token=${encodeURIComponent(staffToken)}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.ok) {
+          alert(data.message || "เช็กอินไม่สำเร็จ");
+          return;
+        }
+
+        alert("เช็กอินสำเร็จ");
+        searchAttendees();
+      } catch (err) {
+        alert("ระบบเช็กอินมีปัญหา");
+      }
+    }
+
+    searchBtn.addEventListener("click", searchAttendees);
+
+    phoneEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") searchAttendees();
+    });
+  </script>
+</body>
+</html>
