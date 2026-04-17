@@ -217,14 +217,23 @@
       color: #555;
       border-bottom: 1px solid #ececec;
       background: #f8f8f8;
+      word-break: break-word;
     }
 
     .slipImg {
       display: block;
       width: 100%;
       height: auto;
-      max-height: 320px;
+      max-height: 480px;
       object-fit: contain;
+      background: #fff;
+    }
+
+    .slipFallback {
+      display: none;
+      padding: 14px;
+      font-size: 14px;
+      color: #666;
       background: #fff;
     }
 
@@ -451,17 +460,35 @@
     }
 
     function getSlipHtml(item) {
-      if (!item.file_url) return "";
+      const fileId = String(item.file_id || "").trim();
+      const fileUrl = String(item.file_url || "").trim();
 
-      const safeUrl = escapeHtml(item.file_url);
+      if (!fileId && !fileUrl) return "";
+
+      const previewUrl = fileId
+        ? `https://drive.google.com/uc?export=view&id=${encodeURIComponent(fileId)}`
+        : fileUrl;
+
+      const safePreviewUrl = escapeHtml(previewUrl);
+      const safeOpenUrl = escapeHtml(fileUrl || previewUrl);
       const safeName = escapeHtml(item.file_name || "สลิปที่แนบ");
 
       return `
         <div class="slipWrap">
           <div class="slipTitle">สลิปที่แนบมา: ${safeName}</div>
-          <img class="slipImg" src="${safeUrl}" alt="Slip" loading="lazy" onerror="this.style.display='none'">
+          <img
+            class="slipImg"
+            src="${safePreviewUrl}"
+            alt="Slip"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+          >
+          <div class="slipFallback">
+            ไม่สามารถแสดงตัวอย่างรูปได้ กรุณากดปุ่มดูสลิป
+          </div>
           <div class="slipActions">
-            <a class="slipLink" href="${safeUrl}" target="_blank" rel="noopener noreferrer">ดูสลิป</a>
+            <a class="slipLink" href="${safeOpenUrl}" target="_blank" rel="noopener noreferrer">ดูสลิป</a>
           </div>
         </div>
       `;
