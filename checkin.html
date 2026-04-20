@@ -154,30 +154,11 @@
       font-weight: 700;
     }
 
-    .badge-vip {
-      background: #fff4c2;
-      color: #5d4600;
-    }
-
-    .badge-checked {
-      background: #e8f5e9;
-      color: #137333;
-    }
-
-    .badge-approved {
-      background: #e8f5e9;
-      color: #137333;
-    }
-
-    .badge-pending {
-      background: #fff4cc;
-      color: #9a6700;
-    }
-
-    .badge-rejected {
-      background: #fde8e8;
-      color: #c62828;
-    }
+    .badge-vip { background: #fff4c2; color: #5d4600; }
+    .badge-checked { background: #e8f5e9; color: #137333; }
+    .badge-approved { background: #e8f5e9; color: #137333; }
+    .badge-pending { background: #fff4cc; color: #9a6700; }
+    .badge-rejected { background: #fde8e8; color: #c62828; }
 
     .checkedTime {
       margin-top: 10px;
@@ -194,13 +175,8 @@
       font-weight: 700;
     }
 
-    .statusNote.pending {
-      color: #9a6700;
-    }
-
-    .statusNote.rejected {
-      color: #c62828;
-    }
+    .statusNote.pending { color: #9a6700; }
+    .statusNote.rejected { color: #c62828; }
 
     .slipWrap {
       margin-top: 14px;
@@ -259,20 +235,9 @@
       font-size: 18px;
     }
 
-    .itemBtn.checkedBtn {
-      background: #101010;
-      color: #fff;
-    }
-
-    .itemBtn.pendingBtn {
-      background: #e5e7eb;
-      color: #6b7280;
-    }
-
-    .itemBtn.rejectedBtn {
-      background: #fee2e2;
-      color: #991b1b;
-    }
+    .itemBtn.checkedBtn { background: #101010; color: #fff; }
+    .itemBtn.pendingBtn { background: #e5e7eb; color: #6b7280; }
+    .itemBtn.rejectedBtn { background: #fee2e2; color: #991b1b; }
 
     .success {
       text-align: center;
@@ -309,6 +274,27 @@
       word-break: break-word;
     }
 
+    .claimBox {
+      margin-top: 18px;
+      border-radius: 18px;
+      background: #111827;
+      color: #fff;
+      padding: 18px 14px;
+    }
+
+    .claimLabel {
+      font-size: 14px;
+      opacity: .85;
+    }
+
+    .claimCode {
+      margin-top: 8px;
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      line-height: 1;
+    }
+
     .successDesc {
       margin-top: 14px;
       font-size: 17px;
@@ -324,35 +310,16 @@
       font-size: 18px;
     }
 
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
 
     @media (max-width: 480px) {
-      .wrap {
-        padding: 10px;
-      }
-
-      .card {
-        padding: 18px 14px;
-        border-radius: 18px;
-      }
-
-      h1 {
-        font-size: 28px;
-      }
-
-      .name {
-        font-size: 17px;
-      }
-
-      .successTitle {
-        font-size: 26px;
-      }
-
-      .successName {
-        font-size: 30px;
-      }
+      .wrap { padding: 10px; }
+      .card { padding: 18px 14px; border-radius: 18px; }
+      h1 { font-size: 28px; }
+      .name { font-size: 17px; }
+      .successTitle { font-size: 26px; }
+      .successName { font-size: 30px; }
+      .claimCode { font-size: 36px; }
     }
   </style>
 </head>
@@ -376,7 +343,16 @@
           <div class="successIcon">✓</div>
           <h2 class="successTitle">เช็กอินเรียบร้อย</h2>
           <div id="successName" class="successName">-</div>
-          <div class="successDesc">ขอบคุณสำหรับการลงทะเบียนเข้าร่วมงาน</div>
+
+          <div class="claimBox">
+            <div class="claimLabel">รหัสรับสิทธิ์</div>
+            <div id="claimCode" class="claimCode">----</div>
+          </div>
+
+          <div class="successDesc">
+            กรุณานำรหัสนี้แจ้งเจ้าหน้าที่เพื่อรับเงินมัดจำและของที่ระลึก
+          </div>
+
           <button class="backBtn" onclick="resetPage()">กลับหน้าแรก</button>
         </div>
       </div>
@@ -396,6 +372,7 @@
     const searchView = document.getElementById("searchView");
     const successView = document.getElementById("successView");
     const successNameEl = document.getElementById("successName");
+    const claimCodeEl = document.getElementById("claimCode");
 
     function normalizePhone(value) {
       return String(value || "").replace(/[^\d]/g, "");
@@ -425,8 +402,9 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function showSuccess(name) {
+    function showSuccess(name, claimCode) {
       successNameEl.textContent = name || "-";
+      claimCodeEl.textContent = claimCode || "----";
       searchView.classList.add("hidden");
       successView.classList.remove("hidden");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -434,22 +412,14 @@
 
     function getRegStatusBadge(item) {
       const status = String(item.reg_status || "").toLowerCase();
-
-      if (status === "approved") {
-        return `<span class="badge badge-approved">อนุมัติแล้ว</span>`;
-      }
-      if (status === "pending") {
-        return `<span class="badge badge-pending">รอตรวจสอบ</span>`;
-      }
-      if (status === "rejected") {
-        return `<span class="badge badge-rejected">ไม่ผ่านการอนุมัติ</span>`;
-      }
+      if (status === "approved") return `<span class="badge badge-approved">อนุมัติแล้ว</span>`;
+      if (status === "pending") return `<span class="badge badge-pending">รอตรวจสอบ</span>`;
+      if (status === "rejected") return `<span class="badge badge-rejected">ไม่ผ่านการอนุมัติ</span>`;
       return `<span class="badge badge-pending">ยังไม่ทราบสถานะ</span>`;
     }
 
     function getStatusNote(item) {
       const status = String(item.reg_status || "").toLowerCase();
-
       if (status === "pending") {
         return `<div class="statusNote pending">ยังรอตรวจสอบ จึงยังไม่สามารถเช็กอินได้</div>`;
       }
@@ -495,11 +465,9 @@
       const regStatus = String(item.reg_status || "").toLowerCase();
 
       const badges = [];
-
       if (item.tag) {
         badges.push(`<span class="badge badge-vip">${escapeHtml(item.tag)}</span>`);
       }
-
       badges.push(getRegStatusBadge(item));
 
       if (checked) {
@@ -507,7 +475,7 @@
       }
 
       const checkedTimeHtml = checked
-        ? `<div class="checkedTime">เช็กอินแล้ว${item.checkin_time ? ` เวลา ${escapeHtml(item.checkin_time)}` : ""}</div>`
+        ? `<div class="checkedTime">เช็กอินแล้ว${item.checkin_time ? ` เวลา ${escapeHtml(item.checkin_time)}` : ""}${item.claim_code ? ` | รหัส ${escapeHtml(item.claim_code)}` : ""}</div>`
         : "";
 
       let itemClass = "item";
@@ -602,7 +570,7 @@
 
         if (!data.ok) {
           if (data.duplicate) {
-            alert(`รายการนี้เช็กอินแล้ว${data.checkin_time ? "\nเวลา: " + data.checkin_time : ""}`);
+            alert(`รายการนี้เช็กอินแล้ว${data.checkin_time ? "\nเวลา: " + data.checkin_time : ""}${data.claim_code ? "\nรหัสรับสิทธิ์: " + data.claim_code : ""}`);
             await searchAttendees();
             return;
           }
@@ -617,7 +585,7 @@
           return;
         }
 
-        showSuccess(item.final_name);
+        showSuccess(item.final_name, data.claim_code);
       } catch (err) {
         alert("ระบบเช็กอินมีปัญหา");
       }
