@@ -460,16 +460,12 @@
     }
 
     function getSlipHtml(item) {
-      const fileId = String(item.file_id || "").trim();
+      const previewUrl = String(item.preview_url || "").trim();
       const fileUrl = String(item.file_url || "").trim();
 
-      if (!fileId && !fileUrl) return "";
+      if (!previewUrl && !fileUrl) return "";
 
-      const previewUrl = fileId
-        ? `https://drive.google.com/uc?export=view&id=${encodeURIComponent(fileId)}`
-        : fileUrl;
-
-      const safePreviewUrl = escapeHtml(previewUrl);
+      const safePreviewUrl = escapeHtml(previewUrl || fileUrl);
       const safeOpenUrl = escapeHtml(fileUrl || previewUrl);
       const safeName = escapeHtml(item.file_name || "สลิปที่แนบ");
 
