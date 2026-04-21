@@ -15,7 +15,7 @@
     }
 
     .wrap {
-      max-width: 1180px;
+      max-width: 1240px;
       margin: 0 auto;
       padding: 20px 16px 24px;
     }
@@ -61,7 +61,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
       margin-bottom: 18px;
     }
@@ -111,6 +111,21 @@
       color: #1d4ed8;
     }
 
+    .card-refunded {
+      background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+      color: #166534;
+    }
+
+    .card-gift {
+      background: linear-gradient(180deg, #fdf4ff 0%, #fae8ff 100%);
+      color: #86198f;
+    }
+
+    .card-pending {
+      background: linear-gradient(180deg, #fff7ed 0%, #fed7aa 100%);
+      color: #9a3412;
+    }
+
     .panel {
       background: #fff;
       border-radius: 20px;
@@ -150,9 +165,15 @@
       line-height: 1.65;
     }
 
+    .badgeRow {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
     .badge {
       display: inline-block;
-      margin-top: 10px;
       padding: 4px 10px;
       border-radius: 999px;
       font-size: 12px;
@@ -162,6 +183,16 @@
     .vip {
       background: #fff4c2;
       color: #6b4f00;
+    }
+
+    .ok {
+      background: #e8f5e9;
+      color: #137333;
+    }
+
+    .wait {
+      background: #f3f4f6;
+      color: #374151;
     }
 
     .empty {
@@ -216,7 +247,7 @@
     <div class="topbar">
       <div>
         <div class="title">Dashboard หน้างาน</div>
-        <div class="sub">สรุปสถานะลงทะเบียนและเช็กอินแบบเรียลไทม์</div>
+        <div class="sub">สรุปเช็กอิน / คืนเงิน / รับของ แบบเรียลไทม์</div>
       </div>
       <button class="refreshBtn" id="refreshBtn">รีเฟรชข้อมูล</button>
     </div>
@@ -246,6 +277,21 @@
         <div class="metricLabel">VIP เช็กอินแล้ว</div>
         <div class="metricValue" id="vipCheckedIn">0</div>
       </div>
+
+      <div class="metricCard card-refunded">
+        <div class="metricLabel">คืนเงินแล้ว</div>
+        <div class="metricValue" id="refundedCount">0</div>
+      </div>
+
+      <div class="metricCard card-gift">
+        <div class="metricLabel">รับของแล้ว</div>
+        <div class="metricValue" id="giftReceivedCount">0</div>
+      </div>
+
+      <div class="metricCard card-pending">
+        <div class="metricLabel">ค้างขั้นตอน</div>
+        <div class="metricValue" id="redemptionPendingCount">0</div>
+      </div>
     </div>
 
     <div class="panel">
@@ -264,6 +310,9 @@
     const remainingEl = document.getElementById("remaining");
     const vipTotalEl = document.getElementById("vipTotal");
     const vipCheckedInEl = document.getElementById("vipCheckedIn");
+    const refundedCountEl = document.getElementById("refundedCount");
+    const giftReceivedCountEl = document.getElementById("giftReceivedCount");
+    const redemptionPendingCountEl = document.getElementById("redemptionPendingCount");
     const latestListEl = document.getElementById("latestList");
     const lastUpdatedEl = document.getElementById("lastUpdated");
     const refreshBtn = document.getElementById("refreshBtn");
@@ -291,7 +340,16 @@
             เวลาเช็กอิน: ${escapeHtml(item.checkin_time || "-")}<br>
             โดย: ${escapeHtml(item.checked_by || "-")}
           </div>
-          ${item.tag === "VIP" ? `<span class="badge vip">VIP</span>` : ``}
+
+          <div class="badgeRow">
+            ${item.tag === "VIP" ? `<span class="badge vip">VIP</span>` : ``}
+            <span class="badge ${item.refund_status === "REFUNDED" ? "ok" : "wait"}">
+              ${item.refund_status === "REFUNDED" ? "คืนเงินแล้ว" : "ยังไม่คืนเงิน"}
+            </span>
+            <span class="badge ${item.gift_status === "RECEIVED" ? "ok" : "wait"}">
+              ${item.gift_status === "RECEIVED" ? "รับของแล้ว" : "ยังไม่รับของ"}
+            </span>
+          </div>
         </div>
       `).join("");
     }
@@ -315,6 +373,9 @@
         remainingEl.textContent = data.summary.remaining || 0;
         vipTotalEl.textContent = data.summary.vip_total || 0;
         vipCheckedInEl.textContent = data.summary.vip_checked_in || 0;
+        refundedCountEl.textContent = data.summary.refunded_count || 0;
+        giftReceivedCountEl.textContent = data.summary.gift_received_count || 0;
+        redemptionPendingCountEl.textContent = data.summary.redemption_pending_count || 0;
 
         renderLatest(data.latest_checkins || []);
         lastUpdatedEl.textContent = "อัปเดตล่าสุด: " + new Date().toLocaleString("th-TH");
