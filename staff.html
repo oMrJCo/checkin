@@ -184,6 +184,7 @@
       html.push(`<span class="badge ${a.checkin_status === "CHECKED_IN" ? "b-ok" : "b-warn"}">${a.checkin_status === "CHECKED_IN" ? "เช็กอินแล้ว" : "ยังไม่เช็กอิน"}</span>`);
       html.push(`<span class="badge ${a.refund_status === "REFUNDED" ? "b-ok" : "b-dark"}">${a.refund_status === "REFUNDED" ? "คืนเงินแล้ว" : "ยังไม่คืนเงิน"}</span>`);
       html.push(`<span class="badge ${a.gift_status === "RECEIVED" ? "b-ok" : "b-dark"}">${a.gift_status === "RECEIVED" ? "รับของแล้ว" : "ยังไม่รับของ"}</span>`);
+      html.push(`<span class="badge ${a.prize_status === "WON" ? "b-ok" : "b-dark"}">${a.prize_status === "WON" ? "ได้รางวัลแล้ว" : "ยังไม่ได้รางวัล"}</span>`);
 
       badgeRow.innerHTML = html.join("");
       refundBtn.disabled = a.refund_status === "REFUNDED" || a.checkin_status !== "CHECKED_IN";
