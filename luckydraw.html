@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Lucky Draw</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 18px 14px 24px;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 22px;
+      padding: 18px 16px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.06);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .sub {
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    input, button {
+      width: 100%;
+      border-radius: 14px;
+      font-size: 18px;
+    }
+
+    input {
+      min-height: 52px;
+      border: 1px solid #d1d5db;
+      padding: 0 14px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    button {
+      min-height: 50px;
+      border: 0;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .drawBtn {
+      background: #111827;
+      color: #fff;
+    }
+
+    .confirmBtn {
+      background: #7c3aed;
+      color: #fff;
+      margin-top: 14px;
+    }
+
+    .msg {
+      margin-top: 12px;
+      min-height: 22px;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .err { color: #c62828; }
+    .ok { color: #137333; }
+
+    .winnerBox {
+      text-align: center;
+      padding: 10px 6px 4px;
+    }
+
+    .winnerLabel {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .winnerName {
+      margin-top: 12px;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .winnerMeta {
+      margin-top: 12px;
+      font-size: 17px;
+      color: #4b5563;
+      line-height: 1.7;
+    }
+
+    .codeBox {
+      margin-top: 16px;
+      background: #111827;
+      color: #fff;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .codeLabel {
+      font-size: 13px;
+      opacity: .85;
+    }
+
+    .codeValue {
+      margin-top: 8px;
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      line-height: 1;
+    }
+
+    .poolCount {
+      margin-top: 14px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    @media (max-width: 540px) {
+      h1 {
+        font-size: 26px;
+      }
+
+      .winnerName {
+        font-size: 28px;
+      }
+
+      .codeValue {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Lucky Draw</h1>
+      <div class="sub">สุ่มจากผู้ที่เช็กอินแล้วเท่านั้น และยังไม่เคยได้รางวัล</div>
+
+      <input id="prizeName" type="text" placeholder="ชื่อรางวัล เช่น รางวัลที่ 1 / โทรศัพท์ / บัตรกำนัล" />
+      <button id="drawBtn" class="drawBtn">สุ่มผู้โชคดี</button>
+      <div id="msg" class="msg"></div>
+    </div>
+
+    <div id="winnerCard" class="card" style="display:none;">
+      <div class="winnerBox">
+        <div class="winnerLabel">ผู้โชคดี</div>
+        <div id="winnerName" class="winnerName">-</div>
+        <div id="winnerMeta" class="winnerMeta">-</div>
+
+        <div class="codeBox">
+          <div class="codeLabel">รหัสรับสิทธิ์</div>
+          <div id="winnerCode" class="codeValue">----</div>
+        </div>
+
+        <div id="poolCount" class="poolCount">จำนวนผู้มีสิทธิ์สุ่ม: 0 คน</div>
+
+        <button id="confirmBtn" class="confirmBtn">ยืนยันมอบรางวัล</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxZoooaEtBsLKUm3ppv-AIVipnC2w2WptAx5YHYwkfLZSTwIuMT7NRy0nHGZjY-AjSF/exec";
+    const STAFF_TOKEN = "LEEPLUS_CHECKIN_2026";
+    const STAFF_NAME = "LUCKY_DRAW_STAFF";
+
+    const prizeNameEl = document.getElementById("prizeName");
+    const drawBtn = document.getElementById("drawBtn");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const msgEl = document.getElementById("msg");
+    const winnerCard = document.getElementById("winnerCard");
+    const winnerNameEl = document.getElementById("winnerName");
+    const winnerMetaEl = document.getElementById("winnerMeta");
+    const winnerCodeEl = document.getElementById("winnerCode");
+    const poolCountEl = document.getElementById("poolCount");
+
+    let currentWinner = null;
+
+    function setMsg(text, type = "") {
+      msgEl.className = "msg " + type;
+      msgEl.textContent = text || "";
+    }
+
+    function renderWinner(winner, totalEligible) {
+      currentWinner = winner;
+      winnerCard.style.display = "block";
+
+      winnerNameEl.textContent = winner.final_name || "-";
+      winnerMetaEl.innerHTML =
+        `เบอร์: ${winner.phone || "-"}<br>` +
+        `รางวัล: ${prizeNameEl.value.trim() || "-"}`;
+      winnerCodeEl.textContent = winner.claim_code || "----";
+      poolCountEl.textContent = `จำนวนผู้มีสิทธิ์สุ่ม: ${totalEligible || 0} คน`;
+    }
+
+    async function drawWinner() {
+      const prizeName = prizeNameEl.value.trim();
+      if (!prizeName) {
+        setMsg("กรุณาระบุชื่อรางวัลก่อน", "err");
+        return;
+      }
+
+      try {
+        drawBtn.disabled = true;
+        confirmBtn.disabled = true;
+        setMsg("กำลังสุ่ม...");
+        winnerCard.style.display = "none";
+
+        const res = await fetch(`${API_URL}?action=lucky_draw_pick`);
+        const data = await res.json();
+
+        if (!data.ok) {
+          setMsg(data.message || "สุ่มไม่สำเร็จ", "err");
+          return;
+        }
+
+        renderWinner(data.winner, data.total_eligible);
+        setMsg("สุ่มสำเร็จ", "ok");
+        confirmBtn.disabled = false;
+      } catch (err) {
+        setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
+      } finally {
+        drawBtn.disabled = false;
+      }
+    }
+
+    async function confirmWinner() {
+      const prizeName = prizeNameEl.value.trim();
+      if (!currentWinner) {
+        setMsg("ยังไม่มีผู้โชคดี", "err");
+        return;
+      }
+      if (!prizeName) {
+        setMsg("กรุณาระบุชื่อรางวัล", "err");
+        return;
+      }
+
+      try {
+        confirmBtn.disabled = true;
+        setMsg("กำลังบันทึกผล...");
+
+        const url =
+          `${API_URL}?action=confirm_prize_winner` +
+          `&row=${encodeURIComponent(currentWinner.row)}` +
+          `&prize_name=${encodeURIComponent(prizeName)}` +
+          `&staff=${encodeURIComponent(STAFF_NAME)}` +
+          `&staff_token=${encodeURIComponent(STAFF_TOKEN)}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.ok) {
+          setMsg(data.message || "บันทึกผลไม่สำเร็จ", "err");
+          return;
+        }
+
+        setMsg(`ยืนยันผู้ได้รับรางวัลแล้ว: ${prizeName}`, "ok");
+      } catch (err) {
+        setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
+      } finally {
+        confirmBtn.disabled = false;
+      }
+    }
+
+    drawBtn.addEventListener("click", drawWinner);
+    confirmBtn.addEventListener("click", confirmWinner);
+  </script>
+</body>
+</html>
