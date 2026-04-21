@@ -10,147 +10,289 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f3f4f6;
-      color: #111827;
+      background:
+        radial-gradient(circle at top, rgba(250,204,21,.18), transparent 30%),
+        linear-gradient(180deg, #0f172a 0%, #111827 100%);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     .wrap {
-      max-width: 760px;
+      max-width: 860px;
       margin: 0 auto;
-      padding: 18px 14px 24px;
+      padding: 24px 14px 40px;
       min-height: 100vh;
     }
 
     .card {
-      background: #fff;
-      border-radius: 22px;
-      padding: 18px 16px;
-      box-shadow: 0 10px 28px rgba(0,0,0,.06);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 24px;
+      padding: 20px 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.28);
       margin-bottom: 16px;
     }
 
     h1 {
       margin: 0 0 8px;
-      font-size: 30px;
+      font-size: 34px;
       font-weight: 800;
       line-height: 1.2;
+      text-align: center;
     }
 
     .sub {
-      color: #6b7280;
-      font-size: 14px;
+      color: rgba(255,255,255,.78);
+      font-size: 15px;
       line-height: 1.6;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
+      text-align: center;
     }
 
     input, button {
       width: 100%;
-      border-radius: 14px;
+      border-radius: 16px;
       font-size: 18px;
     }
 
     input {
-      min-height: 52px;
-      border: 1px solid #d1d5db;
-      padding: 0 14px;
+      min-height: 54px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      padding: 0 16px;
       margin-bottom: 12px;
       outline: none;
     }
 
+    input::placeholder {
+      color: rgba(255,255,255,.55);
+    }
+
+    input:focus {
+      border-color: rgba(250,204,21,.7);
+      box-shadow: 0 0 0 4px rgba(250,204,21,.12);
+    }
+
     button {
-      min-height: 50px;
+      min-height: 54px;
       border: 0;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .drawBtn {
-      background: #111827;
-      color: #fff;
+      background: linear-gradient(180deg, #facc15 0%, #f59e0b 100%);
+      color: #111827;
+      box-shadow: 0 10px 30px rgba(245,158,11,.28);
     }
 
     .confirmBtn {
-      background: #7c3aed;
+      background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
       color: #fff;
-      margin-top: 14px;
+      margin-top: 18px;
+      display: none;
+    }
+
+    .confirmBtn.show {
+      display: block;
+      animation: fadeUp .35s ease;
     }
 
     .msg {
-      margin-top: 12px;
-      min-height: 22px;
+      margin-top: 14px;
+      min-height: 24px;
       text-align: center;
       font-size: 15px;
+      font-weight: 700;
     }
 
-    .err { color: #c62828; }
-    .ok { color: #137333; }
+    .err { color: #fca5a5; }
+    .ok { color: #86efac; }
 
-    .winnerBox {
+    .winnerStage {
+      position: relative;
+      overflow: hidden;
       text-align: center;
-      padding: 10px 6px 4px;
+      padding: 18px 10px 8px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at center, rgba(250,204,21,.14), transparent 45%),
+        rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .glowRing {
+      position: absolute;
+      inset: -80px;
+      background: radial-gradient(circle, rgba(250,204,21,.20), transparent 45%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .glowRing.active {
+      animation: pulseGlow 1.2s ease-in-out infinite;
+      opacity: 1;
     }
 
     .winnerLabel {
+      position: relative;
       font-size: 14px;
-      color: #6b7280;
+      color: rgba(255,255,255,.75);
+      z-index: 2;
+    }
+
+    .rollingBox {
+      position: relative;
+      margin-top: 18px;
+      min-height: 132px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
     }
 
     .winnerName {
-      margin-top: 12px;
-      font-size: 34px;
-      font-weight: 800;
-      line-height: 1.25;
-      color: #111827;
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1.18;
+      color: #fff;
       word-break: break-word;
+      text-shadow: 0 6px 20px rgba(0,0,0,.35);
+      transition: transform .25s ease, opacity .25s ease;
+    }
+
+    .winnerName.rolling {
+      animation: jitter .12s linear infinite;
+      opacity: .95;
+    }
+
+    .winnerName.reveal {
+      animation: winnerPop .7s cubic-bezier(.2,.8,.2,1);
+      color: #fde68a;
     }
 
     .winnerMeta {
+      position: relative;
       margin-top: 12px;
-      font-size: 17px;
-      color: #4b5563;
+      font-size: 18px;
+      color: rgba(255,255,255,.84);
       line-height: 1.7;
+      z-index: 2;
     }
 
     .codeBox {
-      margin-top: 16px;
-      background: #111827;
+      position: relative;
+      margin-top: 20px;
+      background: rgba(0,0,0,.28);
       color: #fff;
-      border-radius: 18px;
-      padding: 14px;
+      border-radius: 20px;
+      padding: 16px 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      z-index: 2;
     }
 
     .codeLabel {
       font-size: 13px;
-      opacity: .85;
+      opacity: .8;
     }
 
     .codeValue {
-      margin-top: 8px;
-      font-size: 36px;
-      font-weight: 800;
-      letter-spacing: 3px;
+      margin-top: 10px;
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: 5px;
       line-height: 1;
+      color: #facc15;
+      text-shadow: 0 6px 20px rgba(0,0,0,.35);
+    }
+
+    .codeValue.reveal {
+      animation: codePop .65s ease;
     }
 
     .poolCount {
-      margin-top: 14px;
+      margin-top: 16px;
       text-align: center;
-      color: #6b7280;
+      color: rgba(255,255,255,.7);
       font-size: 14px;
     }
 
+    .sparkles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .spark {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(250,204,21,.85);
+      filter: blur(.5px);
+      opacity: 0;
+    }
+
+    .spark.show {
+      animation: sparkle 1.2s ease-out forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulseGlow {
+      0%,100% { transform: scale(1); opacity: .45; }
+      50% { transform: scale(1.06); opacity: .95; }
+    }
+
+    @keyframes jitter {
+      0% { transform: translateY(0) scale(1); }
+      25% { transform: translateY(-1px) scale(1.01); }
+      50% { transform: translateY(1px) scale(.995); }
+      75% { transform: translateY(-1px) scale(1.005); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes winnerPop {
+      0% { transform: scale(.85); opacity: .2; }
+      45% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes codePop {
+      0% { transform: scale(.7); opacity: .1; }
+      55% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes sparkle {
+      0% { opacity: 0; transform: translateY(0) scale(.6); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-120px) scale(1.4); }
+    }
+
     @media (max-width: 540px) {
-      h1 {
-        font-size: 26px;
-      }
-
-      .winnerName {
-        font-size: 28px;
-      }
-
-      .codeValue {
-        font-size: 32px;
-      }
+      h1 { font-size: 28px; }
+      .winnerName { font-size: 34px; }
+      .codeValue { font-size: 34px; }
+      .winnerMeta { font-size: 16px; }
     }
   </style>
 </head>
@@ -161,14 +303,21 @@
       <div class="sub">สุ่มจากผู้ที่เช็กอินแล้วเท่านั้น และยังไม่เคยได้รางวัล</div>
 
       <input id="prizeName" type="text" placeholder="ชื่อรางวัล เช่น รางวัลที่ 1 / โทรศัพท์ / บัตรกำนัล" />
-      <button id="drawBtn" class="drawBtn">สุ่มผู้โชคดี</button>
+      <button id="drawBtn" class="drawBtn">เริ่มสุ่มผู้โชคดี</button>
       <div id="msg" class="msg"></div>
     </div>
 
     <div id="winnerCard" class="card" style="display:none;">
-      <div class="winnerBox">
+      <div class="winnerStage">
+        <div id="glowRing" class="glowRing"></div>
+        <div class="sparkles" id="sparkles"></div>
+
         <div class="winnerLabel">ผู้โชคดี</div>
-        <div id="winnerName" class="winnerName">-</div>
+
+        <div class="rollingBox">
+          <div id="winnerName" class="winnerName">-</div>
+        </div>
+
         <div id="winnerMeta" class="winnerMeta">-</div>
 
         <div class="codeBox">
@@ -197,24 +346,75 @@
     const winnerMetaEl = document.getElementById("winnerMeta");
     const winnerCodeEl = document.getElementById("winnerCode");
     const poolCountEl = document.getElementById("poolCount");
+    const glowRingEl = document.getElementById("glowRing");
+    const sparklesEl = document.getElementById("sparkles");
 
     let currentWinner = null;
+    let rollingTimer = null;
 
     function setMsg(text, type = "") {
       msgEl.className = "msg " + type;
       msgEl.textContent = text || "";
     }
 
+    function randomThaiLikeName() {
+      const first = ["สมชาย","วิทยา","อนันต์","ภาณุ","สุเมธ","อรทัย","ปาริชาติ","จิราภา","กัญญา","ศิริพร","ธนพล","ปิยะ","มารุต","อธิวัฒน์"];
+      const last = ["ใจดี","รุ่งเรือง","บุญมี","ทองคำ","แสงดาว","ศรีสุข","ท้วมกลัด","โชติช่วง","เจริญผล","มั่งคั่ง","วัฒนา","กิจไพศาล"];
+      return first[Math.floor(Math.random() * first.length)] + " " + last[Math.floor(Math.random() * last.length)];
+    }
+
+    function startRollingVisual() {
+      winnerCard.style.display = "block";
+      confirmBtn.classList.remove("show");
+      winnerNameEl.className = "winnerName rolling";
+      winnerCodeEl.className = "codeValue";
+      glowRingEl.classList.add("active");
+
+      let tick = 0;
+      rollingTimer = setInterval(() => {
+        tick++;
+        winnerNameEl.textContent = randomThaiLikeName();
+        winnerMetaEl.innerHTML = "กำลังสุ่มผู้โชคดี...";
+        winnerCodeEl.textContent = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+      }, 90);
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          clearInterval(rollingTimer);
+          resolve();
+        }, 2600);
+      });
+    }
+
+    function burstSparkles() {
+      sparklesEl.innerHTML = "";
+      for (let i = 0; i < 18; i++) {
+        const s = document.createElement("span");
+        s.className = "spark show";
+        s.style.left = (10 + Math.random() * 80) + "%";
+        s.style.top = (55 + Math.random() * 18) + "%";
+        s.style.animationDelay = (Math.random() * 0.25) + "s";
+        sparklesEl.appendChild(s);
+      }
+    }
+
     function renderWinner(winner, totalEligible) {
       currentWinner = winner;
-      winnerCard.style.display = "block";
 
+      winnerNameEl.className = "winnerName reveal";
       winnerNameEl.textContent = winner.final_name || "-";
+
       winnerMetaEl.innerHTML =
         `เบอร์: ${winner.phone || "-"}<br>` +
         `รางวัล: ${prizeNameEl.value.trim() || "-"}`;
+
+      winnerCodeEl.className = "codeValue reveal";
       winnerCodeEl.textContent = winner.claim_code || "----";
+
       poolCountEl.textContent = `จำนวนผู้มีสิทธิ์สุ่ม: ${totalEligible || 0} คน`;
+      glowRingEl.classList.remove("active");
+      burstSparkles();
+      confirmBtn.classList.add("show");
     }
 
     async function drawWinner() {
@@ -228,12 +428,13 @@
         drawBtn.disabled = true;
         confirmBtn.disabled = true;
         setMsg("กำลังสุ่ม...");
-        winnerCard.style.display = "none";
+        await startRollingVisual();
 
         const res = await fetch(`${API_URL}?action=lucky_draw_pick`);
         const data = await res.json();
 
         if (!data.ok) {
+          winnerCard.style.display = "none";
           setMsg(data.message || "สุ่มไม่สำเร็จ", "err");
           return;
         }
@@ -242,6 +443,7 @@
         setMsg("สุ่มสำเร็จ", "ok");
         confirmBtn.disabled = false;
       } catch (err) {
+        winnerCard.style.display = "none";
         setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
       } finally {
         drawBtn.disabled = false;
