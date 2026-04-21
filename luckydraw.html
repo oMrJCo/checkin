@@ -12,7 +12,7 @@
       font-family: Arial, sans-serif;
       background:
         radial-gradient(circle at top, rgba(250,204,21,.18), transparent 25%),
-        radial-gradient(circle at bottom, rgba(124,58,237,.15), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(124,58,237,.15), transparent 30%),
         linear-gradient(180deg, #0f172a 0%, #111827 100%);
       color: #fff;
       min-height: 100vh;
@@ -157,17 +157,11 @@
       font-weight: 900;
       cursor: pointer;
       box-shadow: 0 14px 34px rgba(34,197,94,.25);
-      transition: transform .15s ease, opacity .15s ease;
-    }
-
-    .drawBtn:hover {
-      transform: translateY(-1px);
     }
 
     .drawBtn:disabled {
       opacity: .65;
       cursor: not-allowed;
-      transform: none;
     }
 
     .msg {
@@ -242,7 +236,6 @@
       color: #fff;
       word-break: break-word;
       text-shadow: 0 8px 26px rgba(0,0,0,.38);
-      transition: transform .25s ease, opacity .25s ease;
       max-width: 900px;
     }
 
@@ -367,25 +360,25 @@
 
     @keyframes pulseGlow {
       0%,100% { transform: scale(1); opacity: .42; }
-      50% { transform: scale(1.08); opacity: .95; }
+      50% { transform: scale(1.08); opacity: .96; }
     }
 
     @keyframes jitter {
       0% { transform: translateY(0) scale(1); }
       25% { transform: translateY(-2px) scale(1.01); }
-      50% { transform: translateY(2px) scale(.995); }
+      50% { transform: translateY(2px) scale(.994); }
       75% { transform: translateY(-1px) scale(1.006); }
       100% { transform: translateY(0) scale(1); }
     }
 
     @keyframes winnerPop {
-      0% { transform: scale(.78); opacity: .2; filter: blur(4px); }
+      0% { transform: scale(.76); opacity: .18; filter: blur(5px); }
       45% { transform: scale(1.09); opacity: 1; filter: blur(0); }
       100% { transform: scale(1); opacity: 1; filter: blur(0); }
     }
 
     @keyframes codePop {
-      0% { transform: scale(.72); opacity: .15; }
+      0% { transform: scale(.72); opacity: .14; }
       55% { transform: scale(1.08); opacity: 1; }
       100% { transform: scale(1); opacity: 1; }
     }
@@ -397,32 +390,13 @@
     }
 
     @keyframes confettiFall {
-      0% {
-        opacity: 0;
-        transform: translateY(-40px) rotate(0deg);
-      }
-      10% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(115vh) rotate(720deg);
-      }
+      0% { opacity: 0; transform: translateY(-40px) rotate(0deg); }
+      10% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(115vh) rotate(760deg); }
     }
 
     @media (max-width: 920px) {
-      .topGrid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 540px) {
-      h1 { font-size: 30px; }
-      .winnerPrize { font-size: 24px; }
-      .winnerName { font-size: 36px; }
-      .winnerMeta { font-size: 17px; }
-      .codeValue { font-size: 40px; }
-      .prizeGrid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .topGrid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -432,7 +406,7 @@
   <div class="wrap">
     <div class="card">
       <h1>Lucky Draw</h1>
-      <div class="sub">เลือกรางวัลจากปุ่ม แล้วกดสุ่มผู้โชคดี ระบบจะกันคนเดิมไม่ให้ได้หลายรางวัล และจำกัดจำนวนผู้ชนะต่อรางวัลให้อัตโนมัติ</div>
+      <div class="sub">เลือกรางวัลจากปุ่ม ระบบจะดึงจาก Code.gs อัตโนมัติ</div>
 
       <div class="topGrid">
         <div>
@@ -443,7 +417,7 @@
         <div class="sideBox">
           <div class="selectedLabel">รางวัลที่เลือก</div>
           <div class="selectedPrize" id="selectedPrize">ยังไม่ได้เลือกรางวัล</div>
-          <div class="selectedMeta" id="selectedMeta">เลือกปุ่มรางวัลทางซ้ายก่อนเริ่มสุ่ม</div>
+          <div class="selectedMeta" id="selectedMeta">เลือกรางวัลก่อนเริ่มสุ่ม</div>
           <button class="drawBtn" id="drawBtn">เริ่มสุ่มผู้โชคดี</button>
           <div id="msg" class="msg"></div>
         </div>
@@ -479,16 +453,6 @@
     const STAFF_TOKEN = "LEEPLUS_CHECKIN_2026";
     const STAFF_NAME = "LUCKY_DRAW_STAFF";
 
-    // แก้ชื่อปุ่มเองได้ตรงนี้ให้ตรงกับ Code.gs
-    const PRIZES = [
-      "Box Set HD",
-      "Box Set Matt",
-      "Box Set Privacy",
-      "บัตรกำนัล",
-      "ของที่ระลึก",
-      "รางวัลพิเศษ"
-    ];
-
     const prizeGridEl = document.getElementById("prizeGrid");
     const selectedPrizeEl = document.getElementById("selectedPrize");
     const selectedMetaEl = document.getElementById("selectedMeta");
@@ -510,15 +474,25 @@
     let currentWinner = null;
     let prizeStatusMap = {};
     let rollingTimer = null;
+    let prizeNames = [];
 
     function setMsg(text, type = "") {
       msgEl.className = "msg " + type;
       msgEl.textContent = text || "";
     }
 
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     function randomThaiLikeName() {
       const first = ["สมชาย","วิทยา","อนันต์","ภาณุ","สุเมธ","อรทัย","ปาริชาติ","จิราภา","กัญญา","ศิริพร","ธนพล","ปิยะ","มารุต","อธิวัฒน์","เอกภพ","ธันวา"];
-      const last = ["ใจดี","รุ่งเรือง","บุญมี","ทองคำ","แสงดาว","ศรีสุข","ท้วมกลัด","โชติช่วง","เจริญผล","มั่งคั่ง","วัฒนา","กิจไพศาล","ไพบูลย์","วัฒนศิริ"];
+      const last = ["ใจดี","รุ่งเรือง","บุญมี","ทองคำ","แสงดาว","ศรีสุข","ท้วมกลัด","โชติช่วง","เจริญผล","มั่งคั่ง","วัฒนา","กิจไพศาล"];
       return first[Math.floor(Math.random() * first.length)] + " " + last[Math.floor(Math.random() * last.length)];
     }
 
@@ -526,10 +500,22 @@
       return String(Math.floor(Math.random() * 10000)).padStart(4, "0");
     }
 
+    async function loadPrizeConfig() {
+      const res = await fetch(`${API_URL}?action=prize_config`);
+      const data = await res.json();
+      if (!data.ok) throw new Error("load prize config failed");
+
+      prizeNames = (data.prizes || []).map(x => x.name);
+      prizeStatusMap = {};
+      (data.prizes || []).forEach(item => {
+        prizeStatusMap[item.name] = item;
+      });
+    }
+
     function buildPrizeButtons() {
       prizeGridEl.innerHTML = "";
 
-      PRIZES.forEach(prize => {
+      prizeNames.forEach(prize => {
         const status = prizeStatusMap[prize] || { limit: 0, used: 0, remaining: 0, is_full: false };
         const btn = document.createElement("button");
         btn.className = "prizeBtn" + (status.is_full ? " full" : "");
@@ -547,35 +533,16 @@
           selectedPrize = prize;
           selectedPrizeEl.textContent = prize;
           selectedMetaEl.textContent = `ใช้แล้ว ${status.used || 0} / ${status.limit || 0} เหลือ ${status.remaining || 0}`;
+          winnerPrizeEl.textContent = prize;
         };
 
         prizeGridEl.appendChild(btn);
       });
     }
 
-    async function loadPrizeStatus() {
-      try {
-        const res = await fetch(`${API_URL}?action=prize_status_list`);
-        const data = await res.json();
-        if (!data.ok) return;
-
-        prizeStatusMap = {};
-        (data.prizes || []).forEach(item => {
-          prizeStatusMap[item.name] = item;
-        });
-        buildPrizeButtons();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    function escapeHtml(str) {
-      return String(str || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    async function reloadPrizes() {
+      await loadPrizeConfig();
+      buildPrizeButtons();
     }
 
     function startRollingVisual() {
@@ -623,7 +590,6 @@
         c.style.top = (-10 - Math.random() * 20) + "px";
         c.style.background = colors[Math.floor(Math.random() * colors.length)];
         c.style.animationDelay = (Math.random() * 0.3) + "s";
-        c.style.transform = `translateY(-40px) rotate(${Math.random() * 180}deg)`;
         confettiLayerEl.appendChild(c);
       }
 
@@ -635,7 +601,6 @@
     function renderWinner(winner, totalEligible, prizeData) {
       currentWinner = winner;
 
-      winnerPrizeEl.textContent = selectedPrize || "-";
       winnerNameEl.className = "winnerName reveal";
       winnerNameEl.textContent = winner.final_name || "-";
 
@@ -671,7 +636,7 @@
         if (!data.ok) {
           winnerCard.style.display = "none";
           setMsg(data.message || "สุ่มไม่สำเร็จ", "err");
-          await loadPrizeStatus();
+          await reloadPrizes();
           return;
         }
 
@@ -708,12 +673,12 @@
 
         if (!data.ok) {
           setMsg(data.message || "บันทึกผลไม่สำเร็จ", "err");
-          await loadPrizeStatus();
+          await reloadPrizes();
           return;
         }
 
         setMsg(`ยืนยันผู้ได้รับรางวัลแล้ว: ${selectedPrize}`, "ok");
-        await loadPrizeStatus();
+        await reloadPrizes();
 
         const latestPrizeData = prizeStatusMap[selectedPrize];
         if (latestPrizeData && latestPrizeData.is_full) {
@@ -731,7 +696,7 @@
     drawBtn.addEventListener("click", drawWinner);
     confirmBtn.addEventListener("click", confirmWinner);
 
-    loadPrizeStatus();
+    reloadPrizes();
   </script>
 </body>
 </html>
