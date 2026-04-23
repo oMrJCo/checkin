@@ -6,18 +6,21 @@
   <title>Staff Counter</title>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f3f4f6;
       color: #111827;
     }
+
     .wrap {
-      max-width: 680px;
+      max-width: 720px;
       margin: 0 auto;
       padding: 16px;
       min-height: 100vh;
     }
+
     .card {
       background: #fff;
       border-radius: 20px;
@@ -25,27 +28,39 @@
       box-shadow: 0 8px 24px rgba(0,0,0,.06);
       margin-bottom: 16px;
     }
+
     h1 {
       margin: 0 0 8px;
       font-size: 28px;
+      line-height: 1.2;
     }
+
     .sub {
       color: #6b7280;
       font-size: 14px;
       line-height: 1.5;
       margin-bottom: 14px;
     }
+
     input, button {
       width: 100%;
       border-radius: 14px;
       font-size: 18px;
     }
+
     input {
       min-height: 52px;
       border: 1px solid #d1d5db;
       padding: 0 14px;
       margin-bottom: 12px;
+      outline: none;
     }
+
+    input:focus {
+      border-color: #111827;
+      box-shadow: 0 0 0 3px rgba(17,24,39,.08);
+    }
+
     button {
       min-height: 48px;
       border: 0;
@@ -54,53 +69,66 @@
       font-weight: 700;
       cursor: pointer;
     }
+
     button:disabled {
       opacity: .65;
       cursor: not-allowed;
     }
+
     .msg {
       margin-top: 10px;
       min-height: 20px;
       font-size: 15px;
       text-align: center;
     }
+
     .err { color: #c62828; }
     .ok { color: #137333; }
+
     .row {
-      margin-top: 8px;
+      margin-top: 10px;
       font-size: 15px;
       line-height: 1.6;
     }
+
     .label {
       color: #6b7280;
       font-size: 13px;
       font-weight: 700;
+      margin-bottom: 2px;
     }
+
     .value {
       font-size: 17px;
       font-weight: 700;
       color: #111827;
+      word-break: break-word;
     }
+
     .claimBox {
-      margin-top: 12px;
+      margin-top: 14px;
       background: #111827;
       color: #fff;
       border-radius: 16px;
       padding: 14px;
       text-align: center;
     }
+
     .claimCode {
       font-size: 34px;
       font-weight: 800;
       letter-spacing: 3px;
       margin-top: 6px;
+      line-height: 1;
     }
+
     .badgeRow {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      margin-top: 14px;
     }
+
     .badge {
       display: inline-flex;
       align-items: center;
@@ -110,16 +138,71 @@
       font-size: 12px;
       font-weight: 700;
     }
+
     .b-ok { background: #e8f5e9; color: #137333; }
     .b-warn { background: #fff4cc; color: #9a6700; }
     .b-dark { background: #e5e7eb; color: #374151; }
+    .b-course { background: #fef3c7; color: #92400e; }
+    .b-normal { background: #dbeafe; color: #1d4ed8; }
+    .b-prize { background: #f3e8ff; color: #7c3aed; }
+
+    .notice {
+      margin-top: 14px;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 700;
+      display: none;
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .notice.course {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .notice.normal {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
     .actions {
       display: grid;
       gap: 10px;
       margin-top: 16px;
     }
-    .btnRefund { background: #0f766e; }
-    .btnGift { background: #7c3aed; }
+
+    .btnRefund {
+      background: #0f766e;
+    }
+
+    .btnGift {
+      background: #7c3aed;
+    }
+
+    .btnDisabled {
+      background: #d1d5db !important;
+      color: #6b7280 !important;
+    }
+
+    .metaGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .metaGrid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -134,14 +217,30 @@
     </div>
 
     <div id="resultCard" class="card" style="display:none;">
-      <div class="row"><div class="label">ชื่อ</div><div class="value" id="nameVal">-</div></div>
-      <div class="row"><div class="label">เบอร์โทร</div><div class="value" id="phoneVal">-</div></div>
+      <div class="row">
+        <div class="label">ชื่อ</div>
+        <div class="value" id="nameVal">-</div>
+      </div>
+
+      <div class="metaGrid">
+        <div class="row">
+          <div class="label">เบอร์โทร</div>
+          <div class="value" id="phoneVal">-</div>
+        </div>
+        <div class="row">
+          <div class="label">ยอดที่ลงทะเบียน</div>
+          <div class="value" id="depositVal">-</div>
+        </div>
+      </div>
+
       <div class="claimBox">
         <div>รหัสรับสิทธิ์</div>
         <div class="claimCode" id="claimVal">----</div>
       </div>
 
       <div class="badgeRow" id="badgeRow"></div>
+
+      <div id="noticeBox" class="notice"></div>
 
       <div class="actions">
         <button id="refundBtn" class="btnRefund">คืนเงินแล้ว</button>
@@ -160,10 +259,14 @@
     const searchBtn = document.getElementById("searchBtn");
     const msgEl = document.getElementById("msg");
     const resultCard = document.getElementById("resultCard");
+
     const nameVal = document.getElementById("nameVal");
     const phoneVal = document.getElementById("phoneVal");
+    const depositVal = document.getElementById("depositVal");
     const claimVal = document.getElementById("claimVal");
     const badgeRow = document.getElementById("badgeRow");
+    const noticeBox = document.getElementById("noticeBox");
+
     const refundBtn = document.getElementById("refundBtn");
     const giftBtn = document.getElementById("giftBtn");
 
@@ -178,30 +281,86 @@
       return String(v || "").replace(/[^\d]/g, "").slice(0, 4);
     }
 
+    function formatMoney(value) {
+      const num = Number(value || 0);
+      return num.toLocaleString("th-TH") + " บาท";
+    }
+
     function renderBadges(a) {
       const html = [];
 
       html.push(`<span class="badge ${a.checkin_status === "CHECKED_IN" ? "b-ok" : "b-warn"}">${a.checkin_status === "CHECKED_IN" ? "เช็กอินแล้ว" : "ยังไม่เช็กอิน"}</span>`);
       html.push(`<span class="badge ${a.refund_status === "REFUNDED" ? "b-ok" : "b-dark"}">${a.refund_status === "REFUNDED" ? "คืนเงินแล้ว" : "ยังไม่คืนเงิน"}</span>`);
       html.push(`<span class="badge ${a.gift_status === "RECEIVED" ? "b-ok" : "b-dark"}">${a.gift_status === "RECEIVED" ? "รับของแล้ว" : "ยังไม่รับของ"}</span>`);
-      html.push(`<span class="badge ${a.prize_status === "WON" ? "b-ok" : "b-dark"}">${a.prize_status === "WON" ? "ได้รางวัลแล้ว" : "ยังไม่ได้รางวัล"}</span>`);
+
+      if (a.prize_status === "WON") {
+        html.push(`<span class="badge b-prize">ได้รางวัลแล้ว</span>`);
+      }
+
+      if (a.is_course) {
+        html.push(`<span class="badge b-course">ซื้อคอร์ส</span>`);
+      } else {
+        html.push(`<span class="badge b-normal">มัดจำปกติ</span>`);
+      }
 
       badgeRow.innerHTML = html.join("");
-      refundBtn.disabled = a.refund_status === "REFUNDED" || a.checkin_status !== "CHECKED_IN";
-      giftBtn.disabled = a.gift_status === "RECEIVED" || a.checkin_status !== "CHECKED_IN";
+    }
+
+    function renderNotice(a) {
+      noticeBox.className = "notice show " + (a.is_course ? "course" : "normal");
+
+      if (a.is_course) {
+        noticeBox.innerHTML = `
+          🟡 ลูกค้าซื้อคอร์ส<br>
+          → ไม่ต้องคืนเงิน<br>
+          → สามารถกดรับของได้ตามปกติ
+        `;
+      } else {
+        noticeBox.innerHTML = `
+          🔵 ลูกค้ามัดจำปกติ<br>
+          → ต้องคืนเงินมัดจำ<br>
+          → และกดรับของเมื่อแจกเรียบร้อย
+        `;
+      }
+    }
+
+    function renderButtons(a) {
+      const isCheckedIn = a.checkin_status === "CHECKED_IN";
+      const refunded = a.refund_status === "REFUNDED";
+      const gifted = a.gift_status === "RECEIVED";
+
+      if (a.is_course) {
+        refundBtn.disabled = true;
+        refundBtn.classList.add("btnDisabled");
+        refundBtn.textContent = "ไม่ต้องคืนเงิน";
+      } else {
+        refundBtn.disabled = refunded || !isCheckedIn;
+        refundBtn.classList.remove("btnDisabled");
+        refundBtn.textContent = refunded ? "คืนเงินแล้ว" : "คืนเงินแล้ว";
+      }
+
+      giftBtn.disabled = gifted || !isCheckedIn;
+      giftBtn.classList.toggle("btnDisabled", gifted);
+      giftBtn.textContent = gifted ? "รับของแล้ว" : "รับของแล้ว";
     }
 
     function renderAttendee(a) {
       currentAttendee = a;
       resultCard.style.display = "block";
+
       nameVal.textContent = a.final_name || "-";
       phoneVal.textContent = a.phone || "-";
+      depositVal.textContent = formatMoney(a.deposit || 0);
       claimVal.textContent = a.claim_code || "----";
+
       renderBadges(a);
+      renderNotice(a);
+      renderButtons(a);
     }
 
     async function lookupCode() {
       const code = normalizeCode(claimCodeEl.value);
+
       if (!code || code.length !== 4) {
         setMsg("กรุณากรอกรหัส 4 หลัก", "err");
         resultCard.style.display = "none";
@@ -230,15 +389,26 @@
     async function markRefund() {
       if (!currentAttendee) return;
 
+      if (currentAttendee.is_course) {
+        alert("รายการนี้เป็นลูกค้าซื้อคอร์ส ไม่ต้องคืนเงิน");
+        return;
+      }
+
       try {
         refundBtn.disabled = true;
+
         const res = await fetch(
           `${API_URL}?action=mark_refund&row=${encodeURIComponent(currentAttendee.row)}&staff=${encodeURIComponent(STAFF_NAME)}&staff_token=${encodeURIComponent(STAFF_TOKEN)}`
         );
         const data = await res.json();
 
         if (!data.ok) {
-          alert(data.message || "บันทึกคืนเงินไม่สำเร็จ");
+          if (data.no_refund) {
+            alert(data.message || "รายการนี้ไม่ต้องคืนเงิน");
+          } else {
+            alert(data.message || "บันทึกคืนเงินไม่สำเร็จ");
+          }
+          await lookupCode();
           return;
         }
 
@@ -256,6 +426,7 @@
 
       try {
         giftBtn.disabled = true;
+
         const res = await fetch(
           `${API_URL}?action=mark_gift&row=${encodeURIComponent(currentAttendee.row)}&gift_name=${encodeURIComponent(DEFAULT_GIFT_NAME)}&staff=${encodeURIComponent(STAFF_NAME)}&staff_token=${encodeURIComponent(STAFF_TOKEN)}`
         );
@@ -263,6 +434,7 @@
 
         if (!data.ok) {
           alert(data.message || "บันทึกรับของไม่สำเร็จ");
+          await lookupCode();
           return;
         }
 
@@ -276,12 +448,15 @@
     }
 
     searchBtn.addEventListener("click", lookupCode);
+
     claimCodeEl.addEventListener("input", () => {
       claimCodeEl.value = normalizeCode(claimCodeEl.value);
     });
+
     claimCodeEl.addEventListener("keydown", (e) => {
       if (e.key === "Enter") lookupCode();
     });
+
     refundBtn.addEventListener("click", markRefund);
     giftBtn.addEventListener("click", markGift);
   </script>
