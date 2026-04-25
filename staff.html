@@ -105,6 +105,44 @@
       word-break: break-word;
     }
 
+    .shirtBox {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #fff7d6;
+      border: 1px solid #facc15;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .shirtLabel {
+      color: #92400e;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .shirtSize {
+      min-width: 76px;
+      text-align: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #111827;
+      color: #facc15;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: .6px;
+    }
+
+    .shirtSize.empty {
+      min-width: auto;
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
     .claimBox {
       margin-top: 14px;
       background: #111827;
@@ -233,6 +271,14 @@
         </div>
       </div>
 
+      <div class="shirtBox">
+        <div>
+          <div class="shirtLabel">ไซส์เสื้อ</div>
+          <div style="font-size:12px;color:#92400e;font-weight:700;margin-top:2px;">รวมในของที่ระลึก</div>
+        </div>
+        <div class="shirtSize empty" id="shirtVal">ยังไม่ระบุ</div>
+      </div>
+
       <div class="claimBox">
         <div>รหัสรับสิทธิ์</div>
         <div class="claimCode" id="claimVal">----</div>
@@ -263,6 +309,7 @@
     const nameVal = document.getElementById("nameVal");
     const phoneVal = document.getElementById("phoneVal");
     const depositVal = document.getElementById("depositVal");
+    const shirtVal = document.getElementById("shirtVal");
     const claimVal = document.getElementById("claimVal");
     const badgeRow = document.getElementById("badgeRow");
     const noticeBox = document.getElementById("noticeBox");
@@ -344,6 +391,19 @@
       giftBtn.textContent = gifted ? "รับของแล้ว" : "รับของแล้ว";
     }
 
+    function renderShirtSize(a) {
+      const size = String(a.shirt_size || "").trim();
+
+      if (!size) {
+        shirtVal.textContent = "ยังไม่ระบุ";
+        shirtVal.classList.add("empty");
+        return;
+      }
+
+      shirtVal.textContent = size;
+      shirtVal.classList.remove("empty");
+    }
+
     function renderAttendee(a) {
       currentAttendee = a;
       resultCard.style.display = "block";
@@ -353,6 +413,7 @@
       depositVal.textContent = formatMoney(a.deposit || 0);
       claimVal.textContent = a.claim_code || "----";
 
+      renderShirtSize(a);
       renderBadges(a);
       renderNotice(a);
       renderButtons(a);
