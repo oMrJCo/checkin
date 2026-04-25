@@ -137,6 +137,41 @@
       line-height: 1.55;
     }
 
+    .shirtMeta {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff7d6;
+      border: 1px solid #facc15;
+      color: #111;
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .shirtSize {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 56px;
+      min-height: 34px;
+      margin-left: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: #111827;
+      color: #facc15;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: .5px;
+    }
+
+    .shirtSize.empty {
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
     .badges {
       display: flex;
       gap: 8px;
@@ -344,6 +379,10 @@
           <h2 class="successTitle">เช็กอินเรียบร้อย</h2>
           <div id="successName" class="successName">-</div>
 
+          <div id="successShirtBox" class="shirtMeta" style="margin-top:16px;text-align:center;">
+            ไซส์เสื้อ <span id="successShirtSize" class="shirtSize empty">ยังไม่ระบุ</span>
+          </div>
+
           <div class="claimBox">
             <div class="claimLabel">รหัสรับสิทธิ์</div>
             <div id="claimCode" class="claimCode">----</div>
@@ -372,6 +411,7 @@
     const searchView = document.getElementById("searchView");
     const successView = document.getElementById("successView");
     const successNameEl = document.getElementById("successName");
+    const successShirtSizeEl = document.getElementById("successShirtSize");
     const claimCodeEl = document.getElementById("claimCode");
 
     function normalizePhone(value) {
@@ -402,9 +442,26 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function showSuccess(name, claimCode) {
+    function getShirtSizeHtml(size) {
+      const cleanSize = String(size || "").trim();
+      if (!cleanSize) {
+        return '<span class="shirtSize empty">ยังไม่ระบุ</span>';
+      }
+      return '<span class="shirtSize">' + escapeHtml(cleanSize) + '</span>';
+    }
+
+    function showSuccess(name, claimCode, shirtSize) {
       successNameEl.textContent = name || "-";
       claimCodeEl.textContent = claimCode || "----";
+
+      const cleanSize = String(shirtSize || "").trim();
+      successShirtSizeEl.textContent = cleanSize || "ยังไม่ระบุ";
+      if (cleanSize) {
+        successShirtSizeEl.classList.remove("empty");
+      } else {
+        successShirtSizeEl.classList.add("empty");
+      }
+
       searchView.classList.add("hidden");
       successView.classList.remove("hidden");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -505,6 +562,7 @@
         <div class="${itemClass}">
           <div class="name">${escapeHtml(item.final_name || "-")}</div>
           <div class="meta">เบอร์: ${escapeHtml(item.phone || "-")}</div>
+          <div class="shirtMeta">ไซส์เสื้อ ${getShirtSizeHtml(item.shirt_size)}</div>
           ${item.reg_time ? `<div class="meta">เวลาลงทะเบียน: ${escapeHtml(item.reg_time)}</div>` : ""}
           ${badges.length ? `<div class="badges">${badges.join("")}</div>` : ""}
           ${checkedTimeHtml}
@@ -585,7 +643,7 @@
           return;
         }
 
-        showSuccess(item.final_name, data.claim_code);
+        showSuccess(item.final_name, data.claim_code, item.shirt_size);
       } catch (err) {
         alert("ระบบเช็กอินมีปัญหา");
       }
