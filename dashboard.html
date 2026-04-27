@@ -109,6 +109,97 @@
       margin-bottom: 14px;
     }
 
+    .shirtPanel {
+      margin-bottom: 18px;
+    }
+
+    .shirtHead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .shirtTotals {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .shirtPill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .shirtTableWrap {
+      overflow-x: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+    }
+
+    .shirtTable {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+      background: #fff;
+    }
+
+    .shirtTable th,
+    .shirtTable td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .shirtTable th {
+      background: #111827;
+      color: #fff;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .shirtTable tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .shirtSizeTag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 56px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #fff7d6;
+      border: 1px solid #facc15;
+      color: #92400e;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .numStrong {
+      font-size: 18px;
+      font-weight: 900;
+      color: #111827;
+    }
+
+    .numOk {
+      color: #137333;
+    }
+
+    .numRemain {
+      color: #9a3412;
+    }
+
     .latestList {
       display: grid;
       gap: 12px;
@@ -259,6 +350,19 @@
       </div>
     </div>
 
+    <div class="panel shirtPanel">
+      <div class="shirtHead">
+        <div class="panelTitle" style="margin-bottom:0;">สรุปเสื้อ / ของที่ระลึก</div>
+        <div class="shirtTotals">
+          <span class="shirtPill">มีไซส์ทั้งหมด: <span id="shirtTotalWithSize" style="margin-left:4px;">0</span></span>
+          <span class="shirtPill">แจกแล้ว: <span id="shirtTotalReceived" style="margin-left:4px;">0</span></span>
+          <span class="shirtPill">คงเหลือ: <span id="shirtTotalRemaining" style="margin-left:4px;">0</span></span>
+        </div>
+      </div>
+
+      <div id="shirtSummaryBox"></div>
+    </div>
+
     <div class="panel">
       <div class="panelTitle">รายการเช็กอินล่าสุด</div>
       <div id="latestList" class="latestList"></div>
@@ -279,6 +383,10 @@
     const giftReceivedCountEl = document.getElementById("giftReceivedCount");
     const redemptionPendingCountEl = document.getElementById("redemptionPendingCount");
     const prizeWinnerCountEl = document.getElementById("prizeWinnerCount");
+    const shirtSummaryBoxEl = document.getElementById("shirtSummaryBox");
+    const shirtTotalWithSizeEl = document.getElementById("shirtTotalWithSize");
+    const shirtTotalReceivedEl = document.getElementById("shirtTotalReceived");
+    const shirtTotalRemainingEl = document.getElementById("shirtTotalRemaining");
     const latestListEl = document.getElementById("latestList");
     const lastUpdatedEl = document.getElementById("lastUpdated");
     const refreshBtn = document.getElementById("refreshBtn");
@@ -304,7 +412,8 @@
           <div class="latestMeta">
             เบอร์: ${escapeHtml(item.phone || "-")}<br>
             เวลาเช็กอิน: ${escapeHtml(item.checkin_time || "-")}<br>
-            โดย: ${escapeHtml(item.checked_by || "-")}
+            โดย: ${escapeHtml(item.checked_by || "-")}<br>
+            ไซส์เสื้อ: ${escapeHtml(item.shirt_size || "ยังไม่ระบุ")}
           </div>
 
           <div class="badgeRow">
@@ -323,13 +432,56 @@
       `).join("");
     }
 
+    function renderShirtSummary(data) {
+      const sizes = data.sizes || [];
+
+      shirtTotalWithSizeEl.textContent = data.total_with_size || 0;
+      shirtTotalReceivedEl.textContent = data.total_received || 0;
+      shirtTotalRemainingEl.textContent = data.total_remaining || 0;
+
+      if (!sizes.length) {
+        shirtSummaryBoxEl.innerHTML = `<div class="empty">ยังไม่มีข้อมูลไซส์เสื้อ</div>`;
+        return;
+      }
+
+      shirtSummaryBoxEl.innerHTML = `
+        <div class="shirtTableWrap">
+          <table class="shirtTable">
+            <thead>
+              <tr>
+                <th>ไซส์</th>
+                <th>จำนวนทั้งหมด</th>
+                <th>แจกแล้ว</th>
+                <th>คงเหลือ</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sizes.map(item => `
+                <tr>
+                  <td><span class="shirtSizeTag">${escapeHtml(item.size || "-")}</span></td>
+                  <td><span class="numStrong">${item.total || 0}</span></td>
+                  <td><span class="numStrong numOk">${item.received || 0}</span></td>
+                  <td><span class="numStrong numRemain">${item.remaining || 0}</span></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
     async function loadDashboard() {
       try {
         refreshBtn.disabled = true;
         refreshBtn.textContent = "กำลังโหลด...";
 
-        const res = await fetch(`${API_URL}?action=dashboard_summary`);
-        const data = await res.json();
+        const [summaryRes, shirtRes] = await Promise.all([
+          fetch(`${API_URL}?action=dashboard_summary`),
+          fetch(`${API_URL}?action=shirt_summary`)
+        ]);
+
+        const data = await summaryRes.json();
+        const shirtData = await shirtRes.json();
 
         if (!data.ok) {
           latestListEl.innerHTML = `<div class="empty">โหลดข้อมูลไม่สำเร็จ</div>`;
@@ -347,10 +499,17 @@
         redemptionPendingCountEl.textContent = data.summary.redemption_pending_count || 0;
         prizeWinnerCountEl.textContent = data.summary.prize_winner_count || 0;
 
+        if (shirtData && shirtData.ok) {
+          renderShirtSummary(shirtData);
+        } else {
+          shirtSummaryBoxEl.innerHTML = `<div class="empty">โหลดข้อมูลเสื้อไม่สำเร็จ</div>`;
+        }
+
         renderLatest(data.latest_checkins || []);
         lastUpdatedEl.textContent = "อัปเดตล่าสุด: " + new Date().toLocaleString("th-TH");
       } catch (err) {
         latestListEl.innerHTML = `<div class="empty">เชื่อมต่อระบบไม่สำเร็จ</div>`;
+        shirtSummaryBoxEl.innerHTML = `<div class="empty">เชื่อมต่อข้อมูลเสื้อไม่สำเร็จ</div>`;
         lastUpdatedEl.textContent = "เชื่อมต่อระบบไม่สำเร็จ";
       } finally {
         refreshBtn.disabled = false;
