@@ -59,6 +59,18 @@
       cursor: not-allowed;
     }
 
+    .reportBtn {
+      background: #facc15;
+      color: #111827;
+    }
+
+    .topActions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -300,7 +312,10 @@
         <div class="title">Dashboard หน้างาน</div>
         <div class="sub">สรุปเช็กอิน / คืนเงิน / รับของ / ผู้ได้รางวัล แบบเรียลไทม์</div>
       </div>
-      <button class="refreshBtn" id="refreshBtn">รีเฟรชข้อมูล</button>
+      <div class="topActions">
+        <button class="refreshBtn reportBtn" id="reportBtn">📄 สร้างรายงาน Excel</button>
+        <button class="refreshBtn" id="refreshBtn">รีเฟรชข้อมูล</button>
+      </div>
     </div>
 
     <div class="grid">
@@ -390,6 +405,7 @@
     const latestListEl = document.getElementById("latestList");
     const lastUpdatedEl = document.getElementById("lastUpdated");
     const refreshBtn = document.getElementById("refreshBtn");
+    const reportBtn = document.getElementById("reportBtn");
 
     function escapeHtml(str) {
       return String(str || "")
@@ -470,6 +486,43 @@
       `;
     }
 
+    async function generateReports() {
+      if (!confirm("สร้างรายงานและไฟล์ Excel ตอนนี้?")) return;
+
+      try {
+        reportBtn.disabled = true;
+        reportBtn.textContent = "กำลังสร้างรายงาน...";
+
+        const res = await fetch(`${API_URL}?action=generate_reports&t=${Date.now()}`);
+        const data = await res.json();
+
+        if (!data.ok) {
+          alert(data.message || "สร้างรายงานไม่สำเร็จ");
+          return;
+        }
+
+        const msg =
+          "สร้างรายงานเรียบร้อยแล้ว ✅\n\n" +
+          "Approved: " + (data.summary?.approved || 0) + "\n" +
+          "เช็กอินแล้ว: " + (data.summary?.checked_in || 0) + "\n" +
+          "ยังไม่เช็กอิน: " + (data.summary?.no_show || 0) + "\n\n" +
+          "กด OK เพื่อเปิดไฟล์ Excel";
+
+        alert(msg);
+
+        if (data.excel_url) {
+          window.open(data.excel_url, "_blank");
+        } else if (data.spreadsheet_url) {
+          window.open(data.spreadsheet_url, "_blank");
+        }
+      } catch (err) {
+        alert("เชื่อมต่อระบบไม่สำเร็จ");
+      } finally {
+        reportBtn.disabled = false;
+        reportBtn.textContent = "📄 สร้างรายงาน Excel";
+      }
+    }
+
     async function loadDashboard() {
       try {
         refreshBtn.disabled = true;
@@ -518,6 +571,7 @@
     }
 
     refreshBtn.addEventListener("click", loadDashboard);
+    reportBtn.addEventListener("click", generateReports);
 
     loadDashboard();
     setInterval(loadDashboard, 15000);
