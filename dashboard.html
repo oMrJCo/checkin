@@ -265,6 +265,52 @@
       padding: 28px 10px;
     }
 
+    .reportResult {
+      display: none;
+      margin-bottom: 18px;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      color: #065f46;
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.04);
+    }
+
+    .reportResult.show {
+      display: block;
+    }
+
+    .reportResultTitle {
+      font-size: 16px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .reportLinks {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .reportLink {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 12px;
+      background: #111827;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .reportLink.excel {
+      background: #16a34a;
+    }
+
     .footerNote {
       margin-top: 14px;
       text-align: center;
@@ -315,6 +361,15 @@
       <div class="topActions">
         <button class="refreshBtn reportBtn" id="reportBtn">📄 สร้างรายงาน Excel</button>
         <button class="refreshBtn" id="refreshBtn">รีเฟรชข้อมูล</button>
+      </div>
+    </div>
+
+    <div id="reportResult" class="reportResult">
+      <div class="reportResultTitle">สร้างรายงานเรียบร้อยแล้ว</div>
+      <div id="reportResultText">ระบบสร้างไฟล์รายงานให้แล้ว</div>
+      <div class="reportLinks">
+        <a id="reportSheetLink" class="reportLink" href="#" target="_blank" rel="noopener noreferrer">เปิด Google Sheet</a>
+        <a id="reportExcelLink" class="reportLink excel" href="#" target="_blank" rel="noopener noreferrer">ดาวน์โหลด Excel</a>
       </div>
     </div>
 
@@ -406,6 +461,10 @@
     const lastUpdatedEl = document.getElementById("lastUpdated");
     const refreshBtn = document.getElementById("refreshBtn");
     const reportBtn = document.getElementById("reportBtn");
+    const reportResultEl = document.getElementById("reportResult");
+    const reportResultTextEl = document.getElementById("reportResultText");
+    const reportSheetLinkEl = document.getElementById("reportSheetLink");
+    const reportExcelLinkEl = document.getElementById("reportExcelLink");
 
     function escapeHtml(str) {
       return String(str || "")
@@ -487,11 +546,12 @@
     }
 
     async function generateReports() {
-      if (!confirm("สร้างรายงานและไฟล์ Excel ตอนนี้?")) return;
+      if (!confirm("สร้างรายงาน Backup / Export ตอนนี้?")) return;
 
       try {
         reportBtn.disabled = true;
         reportBtn.textContent = "กำลังสร้างรายงาน...";
+        reportResultEl.classList.remove("show");
 
         const res = await fetch(`${API_URL}?action=generate_reports&t=${Date.now()}`);
         const data = await res.json();
@@ -501,20 +561,25 @@
           return;
         }
 
-        const msg =
-          "สร้างรายงานเรียบร้อยแล้ว ✅\n\n" +
-          "Approved: " + (data.summary?.approved || 0) + "\n" +
-          "เช็กอินแล้ว: " + (data.summary?.checked_in || 0) + "\n" +
-          "ยังไม่เช็กอิน: " + (data.summary?.no_show || 0) + "\n\n" +
-          "กด OK เพื่อเปิดไฟล์ Excel";
+        reportResultTextEl.innerHTML =
+          "Approved: " + (data.summary?.approved || 0) +
+          " | เช็กอินแล้ว: " + (data.summary?.checked_in || 0) +
+          " | ยังไม่เช็กอิน: " + (data.summary?.no_show || 0) +
+          "<br>ไฟล์: " + escapeHtml(data.report_name || "-");
 
-        alert(msg);
+        if (data.spreadsheet_url) {
+          reportSheetLinkEl.href = data.spreadsheet_url;
+        }
 
         if (data.excel_url) {
-          window.open(data.excel_url, "_blank");
-        } else if (data.spreadsheet_url) {
-          window.open(data.spreadsheet_url, "_blank");
+          reportExcelLinkEl.href = data.excel_url;
         }
+
+        reportResultEl.classList.add("show");
+
+        alert("สร้างรายงานเรียบร้อยแล้ว ✅\nให้กดปุ่ม เปิด Google Sheet หรือ ดาวน์โหลด Excel ที่แสดงบนหน้า Dashboard");
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } catch (err) {
         alert("เชื่อมต่อระบบไม่สำเร็จ");
       } finally {
