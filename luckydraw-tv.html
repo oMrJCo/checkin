@@ -453,12 +453,143 @@
       100% { opacity: 0; transform: translateY(115vh) rotate(760deg); }
     }
 
+
+
+    .winnerModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0,0,0,.82);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .winnerModal.show {
+      display: flex;
+      animation: modalFade .18s ease;
+    }
+
+    .winnerModalCard {
+      width: min(760px, 94vw);
+      background:
+        radial-gradient(circle at top, rgba(250,204,21,.18), transparent 34%),
+        linear-gradient(180deg, #111827 0%, #0b1220 100%);
+      border: 1px solid rgba(250,204,21,.26);
+      border-radius: 30px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 26px 90px rgba(0,0,0,.55);
+    }
+
+    .winnerModalBadge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(250,204,21,.13);
+      color: #fde68a;
+      border: 1px solid rgba(250,204,21,.22);
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .winnerModalTitle {
+      font-size: 22px;
+      font-weight: 900;
+      color: rgba(255,255,255,.78);
+      margin-bottom: 10px;
+    }
+
+    .winnerModalPrize {
+      font-size: clamp(30px, 4vw, 54px);
+      line-height: 1.12;
+      font-weight: 900;
+      color: #fde68a;
+      margin-bottom: 14px;
+      text-shadow: 0 8px 24px rgba(0,0,0,.34);
+    }
+
+    .winnerModalName {
+      font-size: clamp(40px, 5vw, 72px);
+      line-height: 1.08;
+      font-weight: 900;
+      color: #fff;
+      margin: 12px 0 10px;
+      word-break: break-word;
+      text-shadow: 0 12px 34px rgba(0,0,0,.44);
+    }
+
+    .winnerModalMeta {
+      font-size: 20px;
+      font-weight: 800;
+      color: rgba(255,255,255,.82);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .winnerModalWarn {
+      margin: 0 auto 22px;
+      max-width: 640px;
+      border-radius: 18px;
+      padding: 12px 16px;
+      background: rgba(239,68,68,.13);
+      border: 1px solid rgba(239,68,68,.20);
+      color: #fecaca;
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 900;
+    }
+
+    .winnerModalActions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .winnerModalBtn {
+      min-height: 72px;
+      border: 0;
+      border-radius: 20px;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .winnerModalBtn:disabled {
+      opacity: .58;
+      cursor: not-allowed;
+    }
+
+    .winnerModalBtn.confirm {
+      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+      color: #04130a;
+      box-shadow: 0 16px 38px rgba(34,197,94,.22);
+    }
+
+    .winnerModalBtn.reset {
+      background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 16px 38px rgba(239,68,68,.24);
+    }
+
+    @keyframes modalFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     @media (max-width: 900px) {
       body { overflow-y: auto; }
       .wrap { height: auto; }
       .topbar { grid-template-columns: 1fr; }
       .footerBar { grid-template-columns: 1fr; }
       .confirmBtn { width: 100%; min-width: 0; }
+      .winnerModalActions { grid-template-columns: 1fr; }
+      .winnerModalBtn { font-size: 20px; min-height: 64px; }
     }
   </style>
 </head>
@@ -512,6 +643,26 @@
     </div>
   </div>
 
+
+
+  <div class="winnerModal" id="winnerModal">
+    <div class="winnerModalCard">
+      <div class="winnerModalBadge">ต้องเลือกก่อนสุ่มครั้งต่อไป</div>
+      <div class="winnerModalTitle">ผู้ได้รับรางวัล</div>
+      <div class="winnerModalPrize" id="modalPrize">-</div>
+      <div class="winnerModalName" id="modalName">-</div>
+      <div class="winnerModalMeta" id="modalMeta">เบอร์: -<br>รหัสรับสิทธิ์: ----</div>
+      <div class="winnerModalWarn">
+        กรุณาเลือกอย่างใดอย่างหนึ่งเท่านั้น<br>
+        ถ้าไม่กด ระบบจะไม่ให้สุ่มคนถัดไป เพื่อกันพลาดหน้างาน
+      </div>
+      <div class="winnerModalActions">
+        <button class="winnerModalBtn confirm" id="modalConfirmBtn">✅ ยืนยันผู้ชนะ</button>
+        <button class="winnerModalBtn reset" id="modalResetBtn">❌ ผู้รับไม่อยู่ / สุ่มใหม่</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxZoooaEtBsLKUm3ppv-AIVipnC2w2WptAx5YHYwkfLZSTwIuMT7NRy0nHGZjY-AjSF/exec";
     const STAFF_TOKEN = "LEEPLUS_CHECKIN_2026";
@@ -531,6 +682,12 @@
     const footerLeftEl = document.getElementById("footerLeft");
     const confirmBtn = document.getElementById("confirmBtn");
     const resetBtn = document.getElementById("resetBtn");
+    const winnerModal = document.getElementById("winnerModal");
+    const modalPrize = document.getElementById("modalPrize");
+    const modalName = document.getElementById("modalName");
+    const modalMeta = document.getElementById("modalMeta");
+    const modalConfirmBtn = document.getElementById("modalConfirmBtn");
+    const modalResetBtn = document.getElementById("modalResetBtn");
     const glowRingEl = document.getElementById("glowRing");
     const sparklesEl = document.getElementById("sparkles");
     const confettiLayerEl = document.getElementById("confettiLayer");
@@ -540,6 +697,7 @@
     let prizeStatusMap = {};
     let prizeNames = [];
     let rollingTimer = null;
+    let isLocked = false;
 
     function setMsg(text, type = "") {
       msgEl.className = "msg " + type;
@@ -563,6 +721,26 @@
 
     function randomCode() {
       return String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+    }
+
+
+
+    function openWinnerModal(winner) {
+      if (!winner) return;
+      modalPrize.textContent = selectedPrize || "-";
+      modalName.textContent = winner.final_name || "-";
+      modalMeta.innerHTML =
+        `เบอร์: ${escapeHtml(winner.phone || "-")}<br>` +
+        `รหัสรับสิทธิ์: ${escapeHtml(winner.claim_code || "----")}`;
+      winnerModal.classList.add("show");
+      drawBtn.disabled = true;
+      isLocked = true;
+    }
+
+    function closeWinnerModal() {
+      winnerModal.classList.remove("show");
+      drawBtn.disabled = false;
+      isLocked = false;
     }
 
     async function loadPrizeConfig() {
@@ -684,11 +862,16 @@
       glowRingEl.classList.remove("active");
       burstSparkles();
       burstConfetti();
-      confirmBtn.classList.add("show");
-      resetBtn.classList.add("show");
+      openWinnerModal(winner);
     }
 
     async function drawWinner() {
+      if (isLocked) {
+        setMsg("⚠️ กรุณายืนยันผู้ชนะ หรือกดผู้รับไม่อยู่/สุ่มใหม่ก่อน", "err");
+        footerLeftEl.textContent = "ยังมีผู้ชนะที่รอยืนยันอยู่ กรุณาเลือกใน popup ก่อน";
+        return;
+      }
+
       if (!selectedPrize) {
         setMsg("กรุณาเลือกรางวัลก่อน", "err");
         return;
@@ -737,18 +920,20 @@
         setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
         footerLeftEl.textContent = "เชื่อมต่อระบบไม่สำเร็จ";
       } finally {
-        drawBtn.disabled = false;
+        drawBtn.disabled = isLocked ? true : false;
       }
     }
 
     async function confirmWinner() {
       if (!currentWinner || !selectedPrize) {
         setMsg("ยังไม่มีผู้โชคดี", "err");
-        return;
+        return false;
       }
 
       try {
         confirmBtn.disabled = true;
+        modalConfirmBtn.disabled = true;
+        modalResetBtn.disabled = true;
         setMsg("กำลังบันทึกผล...");
 
         const url =
@@ -765,7 +950,7 @@
           setMsg(data.message || "บันทึกผลไม่สำเร็จ", "err");
           footerLeftEl.textContent = data.message || "บันทึกผลไม่สำเร็จ";
           await reloadPrizes();
-          return;
+          return false;
         }
 
         setMsg(`ยืนยันผู้ได้รับรางวัลแล้ว: ${selectedPrize}`, "ok");
@@ -782,11 +967,16 @@
           selectedMetaEl.textContent = "รางวัลที่ครบจำนวนแล้วจะกดไม่ได้อัตโนมัติ";
           document.querySelectorAll(".prizeBtn").forEach(x => x.classList.remove("active"));
         }
+
+        return true;
       } catch (err) {
         setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
         footerLeftEl.textContent = "เชื่อมต่อระบบไม่สำเร็จ";
+        return false;
       } finally {
         confirmBtn.disabled = false;
+        modalConfirmBtn.disabled = false;
+        modalResetBtn.disabled = false;
       }
     }
 
@@ -795,6 +985,8 @@
       try {
         resetBtn.disabled = true;
         confirmBtn.disabled = true;
+        modalConfirmBtn.disabled = true;
+        modalResetBtn.disabled = true;
         setMsg("กำลังล้างผลสุ่ม...");
 
         const url =
@@ -808,7 +1000,7 @@
         if (!data.ok) {
           setMsg(data.message || "ล้างผลสุ่มไม่สำเร็จ", "err");
           footerLeftEl.textContent = data.message || "ล้างผลสุ่มไม่สำเร็จ";
-          return;
+          return false;
         }
 
         currentWinner = null;
@@ -822,19 +1014,41 @@
         confirmBtn.classList.remove("show");
         resetBtn.classList.remove("show");
         setMsg("ล้างผลแล้ว พร้อมสุ่มใหม่", "ok");
+        return true;
       } catch (err) {
         setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
         footerLeftEl.textContent = "เชื่อมต่อระบบไม่สำเร็จ";
+        return false;
       } finally {
         confirmBtn.disabled = false;
         resetBtn.disabled = false;
+        modalConfirmBtn.disabled = false;
+        modalResetBtn.disabled = false;
       }
     }
 
 
     drawBtn.addEventListener("click", drawWinner);
-    confirmBtn.addEventListener("click", confirmWinner);
-    resetBtn.addEventListener("click", resetWinner);
+
+    confirmBtn.addEventListener("click", async () => {
+      const ok = await confirmWinner();
+      if (ok) closeWinnerModal();
+    });
+
+    resetBtn.addEventListener("click", async () => {
+      const ok = await resetWinner();
+      if (ok) closeWinnerModal();
+    });
+
+    modalConfirmBtn.addEventListener("click", async () => {
+      const ok = await confirmWinner();
+      if (ok) closeWinnerModal();
+    });
+
+    modalResetBtn.addEventListener("click", async () => {
+      const ok = await resetWinner();
+      if (ok) closeWinnerModal();
+    });
 
     reloadPrizes();
   </script>
