@@ -1030,25 +1030,25 @@
 
     drawBtn.addEventListener("click", drawWinner);
 
-    confirmBtn.addEventListener("click", async () => {
-      const ok = await confirmWinner();
-      if (ok) closeWinnerModal();
-    });
+    confirmBtn.addEventListener("click", () => {
+  closeWinnerModal();
+  confirmWinner();
+});
 
-    resetBtn.addEventListener("click", async () => {
-      const ok = await resetWinner();
-      if (ok) closeWinnerModal();
-    });
+resetBtn.addEventListener("click", () => {
+  closeWinnerModal();
+  resetWinner();
+});
 
-    modalConfirmBtn.addEventListener("click", async () => {
-      const ok = await confirmWinner();
-      if (ok) closeWinnerModal();
-    });
+modalConfirmBtn.addEventListener("click", () => {
+  closeWinnerModal();
+  confirmWinner();
+});
 
-    modalResetBtn.addEventListener("click", async () => {
-      const ok = await resetWinner();
-      if (ok) closeWinnerModal();
-    });
+modalResetBtn.addEventListener("click", () => {
+  closeWinnerModal();
+  resetWinner();
+});
 
     reloadPrizes();
   </script>
