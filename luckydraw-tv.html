@@ -362,7 +362,7 @@
 
     .footerBar {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr auto auto;
       gap: 16px;
       align-items: center;
     }
@@ -508,6 +508,7 @@
     <div class="footerBar">
       <div class="footerLeft" id="footerLeft">ระบบจะกันคนเดิมไม่ให้ได้หลายรางวัล และกันเกินจำนวนรางวัลอัตโนมัติ</div>
       <button class="confirmBtn" id="confirmBtn">ยืนยันผู้ชนะ</button>
+      <button class="confirmBtn" id="resetBtn" style="background:linear-gradient(180deg,#ef4444 0%,#dc2626 100%);box-shadow:0 16px 38px rgba(239,68,68,.26);">ผู้รับไม่อยู่ / สุ่มใหม่</button>
     </div>
   </div>
 
@@ -529,6 +530,7 @@
     const poolCountEl = document.getElementById("poolCount");
     const footerLeftEl = document.getElementById("footerLeft");
     const confirmBtn = document.getElementById("confirmBtn");
+    const resetBtn = document.getElementById("resetBtn");
     const glowRingEl = document.getElementById("glowRing");
     const sparklesEl = document.getElementById("sparkles");
     const confettiLayerEl = document.getElementById("confettiLayer");
@@ -610,6 +612,7 @@
 
     function startRollingVisual() {
       confirmBtn.classList.remove("show");
+      resetBtn.classList.remove("show");
       winnerPrizeEl.textContent = selectedPrize || "-";
       winnerNameEl.className = "winnerName rolling";
       winnerCodeEl.className = "codeValue";
@@ -682,6 +685,7 @@
       burstSparkles();
       burstConfetti();
       confirmBtn.classList.add("show");
+      resetBtn.classList.add("show");
     }
 
     async function drawWinner() {
@@ -700,6 +704,20 @@
         const data = await res.json();
 
         if (!data.ok) {
+          if (data.pending && data.winner) {
+            if (data.prize_name) {
+              selectedPrize = data.prize_name;
+              selectedPrizeEl.textContent = data.prize_name;
+              winnerPrizeEl.textContent = data.prize_name;
+            }
+            renderWinner(data.winner, data.total_eligible || 0, data);
+            setMsg(data.message || "มีผู้ชนะที่ยังไม่ได้ยืนยัน", "err");
+            footerLeftEl.textContent = data.message || "กรุณายืนยัน หรือกดผู้รับไม่อยู่/สุ่มใหม่";
+            confirmBtn.disabled = false;
+            resetBtn.disabled = false;
+            return;
+          }
+
           setMsg(data.message || "สุ่มไม่สำเร็จ", "err");
           footerLeftEl.textContent = data.message || "สุ่มไม่สำเร็จ";
           await reloadPrizes();
@@ -752,6 +770,9 @@
 
         setMsg(`ยืนยันผู้ได้รับรางวัลแล้ว: ${selectedPrize}`, "ok");
         footerLeftEl.textContent = `ยืนยันแล้ว · ${selectedPrize} · เหลือ ${data.remaining_after_confirm} สิทธิ์`;
+        currentWinner = null;
+        confirmBtn.classList.remove("show");
+        resetBtn.classList.remove("show");
         await reloadPrizes();
 
         const latestPrizeData = prizeStatusMap[selectedPrize];
@@ -769,8 +790,51 @@
       }
     }
 
+
+    async function resetWinner() {
+      try {
+        resetBtn.disabled = true;
+        confirmBtn.disabled = true;
+        setMsg("กำลังล้างผลสุ่ม...");
+
+        const url =
+          `${API_URL}?action=reset_lucky_draw` +
+          `&staff=${encodeURIComponent(STAFF_NAME)}` +
+          `&staff_token=${encodeURIComponent(STAFF_TOKEN)}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.ok) {
+          setMsg(data.message || "ล้างผลสุ่มไม่สำเร็จ", "err");
+          footerLeftEl.textContent = data.message || "ล้างผลสุ่มไม่สำเร็จ";
+          return;
+        }
+
+        currentWinner = null;
+        winnerNameEl.className = "winnerName";
+        winnerNameEl.textContent = "พร้อมสุ่มใหม่";
+        winnerMetaEl.textContent = "ผู้รับไม่อยู่ ระบบยังไม่บันทึกผล และพร้อมสุ่มใหม่";
+        winnerCodeEl.className = "codeValue";
+        winnerCodeEl.textContent = "----";
+        poolCountEl.textContent = "กดเริ่มสุ่มผู้โชคดีอีกครั้ง";
+        footerLeftEl.textContent = "ล้างผลสุ่มล่าสุดแล้ว · ยังไม่มีการบันทึกผู้ชนะ";
+        confirmBtn.classList.remove("show");
+        resetBtn.classList.remove("show");
+        setMsg("ล้างผลแล้ว พร้อมสุ่มใหม่", "ok");
+      } catch (err) {
+        setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
+        footerLeftEl.textContent = "เชื่อมต่อระบบไม่สำเร็จ";
+      } finally {
+        confirmBtn.disabled = false;
+        resetBtn.disabled = false;
+      }
+    }
+
+
     drawBtn.addEventListener("click", drawWinner);
     confirmBtn.addEventListener("click", confirmWinner);
+    resetBtn.addEventListener("click", resetWinner);
 
     reloadPrizes();
   </script>
