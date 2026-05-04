@@ -1,701 +1,147 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Lucky Draw</title>
-  <style>
-    * { box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Draw</title>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(250,204,21,.18), transparent 25%),
-        radial-gradient(circle at bottom right, rgba(124,58,237,.15), transparent 30%),
-        linear-gradient(180deg, #0f172a 0%, #111827 100%);
-      color: #fff;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+<style>
+body {
+  font-family: sans-serif;
+  background: #0f172a;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
 
-    .wrap {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 24px 14px 40px;
-      min-height: 100vh;
-    }
+h1 {
+  margin-bottom: 20px;
+}
 
-    .card {
-      background: rgba(255,255,255,.06);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 24px;
-      padding: 20px 18px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.28);
-      margin-bottom: 16px;
-    }
+#winnerBox {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 30px 0;
+  padding: 20px;
+  background: #1e293b;
+  border-radius: 12px;
+}
 
-    h1 {
-      margin: 0 0 8px;
-      font-size: 36px;
-      font-weight: 900;
-      line-height: 1.2;
-      text-align: center;
-    }
+button {
+  font-size: 18px;
+  padding: 12px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-    .sub {
-      color: rgba(255,255,255,.78);
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 18px;
-      text-align: center;
-    }
+#drawBtn { background: #facc15; color: #000; }
+#confirmBtn { background: #22c55e; color: #000; }
+#skipBtn { background: #ef4444; color: #fff; }
 
-    .topGrid {
-      display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 16px;
-      align-items: start;
-    }
-
-    .prizePanelTitle {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      color: #fde68a;
-    }
-
-    .prizeGrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
-    }
-
-    .prizeBtn {
-      min-height: 60px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 16px;
-      background: rgba(255,255,255,.06);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      padding: 10px 12px;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
-      text-align: left;
-    }
-
-    .prizeBtn:hover {
-      transform: translateY(-1px);
-    }
-
-    .prizeBtn.active {
-      background: linear-gradient(180deg, #facc15 0%, #f59e0b 100%);
-      color: #111827;
-      border-color: rgba(250,204,21,.75);
-      box-shadow: 0 12px 30px rgba(245,158,11,.28);
-    }
-
-    .prizeBtn.full {
-      opacity: .45;
-      cursor: not-allowed;
-    }
-
-    .prizeName {
-      font-size: 15px;
-      font-weight: 900;
-      line-height: 1.25;
-    }
-
-    .prizeMeta {
-      margin-top: 6px;
-      font-size: 12px;
-      opacity: .88;
-      line-height: 1.4;
-    }
-
-    .sideBox {
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      padding: 16px;
-    }
-
-    .selectedLabel {
-      color: rgba(255,255,255,.68);
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .selectedPrize {
-      margin-top: 8px;
-      font-size: 26px;
-      font-weight: 900;
-      line-height: 1.2;
-      color: #fde68a;
-      min-height: 62px;
-    }
-
-    .selectedMeta {
-      margin-top: 8px;
-      font-size: 14px;
-      color: rgba(255,255,255,.8);
-      line-height: 1.6;
-      min-height: 42px;
-    }
-
-    .drawBtn {
-      margin-top: 14px;
-      width: 100%;
-      min-height: 58px;
-      border: 0;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-      color: #04130a;
-      font-size: 20px;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 14px 34px rgba(34,197,94,.25);
-    }
-
-    .drawBtn:disabled {
-      opacity: .65;
-      cursor: not-allowed;
-    }
-
-    .msg {
-      margin-top: 14px;
-      min-height: 24px;
-      text-align: center;
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .err { color: #fca5a5; }
-    .ok { color: #86efac; }
-
-    .winnerCard {
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-      padding: 24px 18px 20px;
-      border-radius: 26px;
-      background:
-        radial-gradient(circle at center, rgba(250,204,21,.12), transparent 40%),
-        rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 20px 50px rgba(0,0,0,.26);
-    }
-
-    .glowRing {
-      position: absolute;
-      inset: -100px;
-      background: radial-gradient(circle, rgba(250,204,21,.24), transparent 40%);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .glowRing.active {
-      animation: pulseGlow .95s ease-in-out infinite;
-      opacity: 1;
-    }
-
-    .winnerLabel {
-      position: relative;
-      font-size: 14px;
-      color: rgba(255,255,255,.75);
-      z-index: 2;
-    }
-
-    .winnerPrize {
-      position: relative;
-      margin-top: 10px;
-      font-size: 30px;
-      font-weight: 900;
-      line-height: 1.2;
-      color: #fde68a;
-      min-height: 38px;
-      z-index: 2;
-    }
-
-    .rollingBox {
-      position: relative;
-      margin-top: 18px;
-      min-height: 148px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
-    }
-
-    .winnerName {
-      font-size: 52px;
-      font-weight: 900;
-      line-height: 1.16;
-      color: #fff;
-      word-break: break-word;
-      text-shadow: 0 8px 26px rgba(0,0,0,.38);
-      max-width: 900px;
-    }
-
-    .winnerName.rolling {
-      animation: jitter .09s linear infinite;
-      opacity: .96;
-    }
-
-    .winnerName.reveal {
-      animation: winnerPop .8s cubic-bezier(.2,.8,.2,1);
-      color: #fde68a;
-    }
-
-    .winnerMeta {
-      position: relative;
-      margin-top: 12px;
-      font-size: 20px;
-      color: rgba(255,255,255,.86);
-      line-height: 1.7;
-      z-index: 2;
-      min-height: 58px;
-    }
-
-    .codeBox {
-      position: relative;
-      margin-top: 20px;
-      background: rgba(0,0,0,.28);
-      color: #fff;
-      border-radius: 22px;
-      padding: 18px 14px;
-      border: 1px solid rgba(255,255,255,.08);
-      z-index: 2;
-    }
-
-    .codeLabel {
-      font-size: 13px;
-      opacity: .82;
-    }
-
-    .codeValue {
-      margin-top: 12px;
-      font-size: 54px;
-      font-weight: 900;
-      letter-spacing: 6px;
-      line-height: 1;
-      color: #facc15;
-      text-shadow: 0 8px 26px rgba(0,0,0,.35);
-    }
-
-    .codeValue.reveal {
-      animation: codePop .7s ease;
-    }
-
-    .poolCount {
-      margin-top: 16px;
-      text-align: center;
-      color: rgba(255,255,255,.72);
-      font-size: 14px;
-    }
-
-    .confirmBtn {
-      margin-top: 18px;
-      min-height: 56px;
-      width: 100%;
-      border: 0;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
-      color: #fff;
-      font-size: 19px;
-      font-weight: 900;
-      cursor: pointer;
-      display: none;
-      box-shadow: 0 14px 34px rgba(124,58,237,.28);
-    }
-
-    .confirmBtn.show {
-      display: block;
-      animation: fadeUp .4s ease;
-    }
-
-    .sparkles {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .spark {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(250,204,21,.9);
-      opacity: 0;
-    }
-
-    .spark.show {
-      animation: sparkle 1.3s ease-out forwards;
-    }
-
-    .confettiLayer {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 999;
-    }
-
-    .confetti {
-      position: absolute;
-      width: 12px;
-      height: 18px;
-      opacity: 0;
-      transform: translateY(-40px) rotate(0deg);
-      animation: confettiFall 2.6s ease-in forwards;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pulseGlow {
-      0%,100% { transform: scale(1); opacity: .42; }
-      50% { transform: scale(1.08); opacity: .96; }
-    }
-
-    @keyframes jitter {
-      0% { transform: translateY(0) scale(1); }
-      25% { transform: translateY(-2px) scale(1.01); }
-      50% { transform: translateY(2px) scale(.994); }
-      75% { transform: translateY(-1px) scale(1.006); }
-      100% { transform: translateY(0) scale(1); }
-    }
-
-    @keyframes winnerPop {
-      0% { transform: scale(.76); opacity: .18; filter: blur(5px); }
-      45% { transform: scale(1.09); opacity: 1; filter: blur(0); }
-      100% { transform: scale(1); opacity: 1; filter: blur(0); }
-    }
-
-    @keyframes codePop {
-      0% { transform: scale(.72); opacity: .14; }
-      55% { transform: scale(1.08); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes sparkle {
-      0% { opacity: 0; transform: translateY(0) scale(.6); }
-      18% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(-160px) scale(1.6); }
-    }
-
-    @keyframes confettiFall {
-      0% { opacity: 0; transform: translateY(-40px) rotate(0deg); }
-      10% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(115vh) rotate(760deg); }
-    }
-
-    @media (max-width: 920px) {
-      .topGrid { grid-template-columns: 1fr; }
-    }
-  </style>
+#warning {
+  color: #f87171;
+  margin-top: 10px;
+}
+</style>
 </head>
+
 <body>
-  <div class="confettiLayer" id="confettiLayer"></div>
 
-  <div class="wrap">
-    <div class="card">
-      <h1>Lucky Draw</h1>
+<h1>🎉 Lucky Draw</h1>
 
-      <div class="topGrid">
-        <div>
-          <div class="prizePanelTitle">เลือกรางวัล</div>
-          <div class="prizeGrid" id="prizeGrid"></div>
-        </div>
+<div id="winnerBox">กดสุ่มเพื่อเริ่ม</div>
 
-        <div class="sideBox">
-          <div class="selectedLabel">รางวัลที่เลือก</div>
-          <div class="selectedPrize" id="selectedPrize">ยังไม่ได้เลือกรางวัล</div>
-          <div class="selectedMeta" id="selectedMeta">เลือกรางวัลก่อนเริ่มสุ่ม</div>
-          <button class="drawBtn" id="drawBtn">เริ่มสุ่มผู้โชคดี</button>
-          <div id="msg" class="msg"></div>
-        </div>
-      </div>
-    </div>
+<button id="drawBtn">สุ่ม</button>
+<button id="confirmBtn" disabled>ยืนยันผู้ชนะ</button>
+<button id="skipBtn" disabled>ผู้รับไม่อยู่ / สุ่มใหม่</button>
 
-    <div id="winnerCard" class="winnerCard" style="display:none;">
-      <div id="glowRing" class="glowRing"></div>
-      <div id="sparkles" class="sparkles"></div>
+<div id="warning"></div>
 
-      <div class="winnerLabel">ผู้โชคดี</div>
-      <div class="winnerPrize" id="winnerPrize">-</div>
+<script>
+const WEB_APP_URL = "ใส่ URL Apps Script";
 
-      <div class="rollingBox">
-        <div id="winnerName" class="winnerName">-</div>
-      </div>
+let allParticipants = [];
+let winners = [];
+let pendingWinner = null;
 
-      <div id="winnerMeta" class="winnerMeta">-</div>
+// โหลดรายชื่อจากระบบ
+async function loadParticipants() {
+  const res = await fetch(WEB_APP_URL + "?action=getParticipants");
+  const data = await res.json();
+  allParticipants = data;
+}
 
-      <div class="codeBox">
-        <div class="codeLabel">รหัสรับสิทธิ์</div>
-        <div id="winnerCode" class="codeValue">----</div>
-      </div>
+function showWarning(msg) {
+  document.getElementById("warning").innerText = msg;
+}
 
-      <div id="poolCount" class="poolCount">จำนวนผู้มีสิทธิ์สุ่ม: 0 คน</div>
+// สุ่ม
+document.getElementById("drawBtn").onclick = () => {
 
-      <button id="confirmBtn" class="confirmBtn">ยืนยันผู้ชนะ</button>
-    </div>
-  </div>
+  // ถ้ายังไม่ยืนยัน ห้ามสุ่มใหม่
+  if (pendingWinner) {
+    showWarning("⚠️ กรุณายืนยันผล หรือกดสุ่มใหม่ก่อน");
+    return;
+  }
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxZoooaEtBsLKUm3ppv-AIVipnC2w2WptAx5YHYwkfLZSTwIuMT7NRy0nHGZjY-AjSF/exec";
-    const STAFF_TOKEN = "LEEPLUS_CHECKIN_2026";
-    const STAFF_NAME = "LUCKY_DRAW_STAFF";
+  showWarning("");
 
-    const prizeGridEl = document.getElementById("prizeGrid");
-    const selectedPrizeEl = document.getElementById("selectedPrize");
-    const selectedMetaEl = document.getElementById("selectedMeta");
-    const drawBtn = document.getElementById("drawBtn");
-    const msgEl = document.getElementById("msg");
+  const remaining = allParticipants.filter(p => !winners.includes(p.phone));
 
-    const winnerCard = document.getElementById("winnerCard");
-    const winnerPrizeEl = document.getElementById("winnerPrize");
-    const winnerNameEl = document.getElementById("winnerName");
-    const winnerMetaEl = document.getElementById("winnerMeta");
-    const winnerCodeEl = document.getElementById("winnerCode");
-    const poolCountEl = document.getElementById("poolCount");
-    const confirmBtn = document.getElementById("confirmBtn");
-    const glowRingEl = document.getElementById("glowRing");
-    const sparklesEl = document.getElementById("sparkles");
-    const confettiLayerEl = document.getElementById("confettiLayer");
+  if (remaining.length === 0) {
+    document.getElementById("winnerBox").innerText = "ไม่มีรายชื่อเหลือแล้ว";
+    return;
+  }
 
-    let selectedPrize = null;
-    let currentWinner = null;
-    let prizeStatusMap = {};
-    let rollingTimer = null;
-    let prizeNames = [];
+  const random = remaining[Math.floor(Math.random() * remaining.length)];
 
-    function setMsg(text, type = "") {
-      msgEl.className = "msg " + type;
-      msgEl.textContent = text || "";
-    }
+  pendingWinner = random;
 
-    function escapeHtml(str) {
-      return String(str || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
+  document.getElementById("winnerBox").innerText =
+    random.fullname + " (" + random.phone + ")";
 
-    function randomThaiLikeName() {
-      const first = ["สมชาย","วิทยา","อนันต์","ภาณุ","สุเมธ","อรทัย","ปาริชาติ","จิราภา","กัญญา","ศิริพร","ธนพล","ปิยะ","มารุต","อธิวัฒน์","เอกภพ","ธันวา"];
-      const last = ["ใจดี","รุ่งเรือง","บุญมี","ทองคำ","แสงดาว","ศรีสุข","ท้วมกลัด","โชติช่วง","เจริญผล","มั่งคั่ง","วัฒนา","กิจไพศาล"];
-      return first[Math.floor(Math.random() * first.length)] + " " + last[Math.floor(Math.random() * last.length)];
-    }
+  document.getElementById("confirmBtn").disabled = false;
+  document.getElementById("skipBtn").disabled = false;
+};
 
-    function randomCode() {
-      return String(Math.floor(Math.random() * 10000)).padStart(4, "0");
-    }
+// ยืนยันผู้ชนะ
+document.getElementById("confirmBtn").onclick = async () => {
 
-    async function loadPrizeConfig() {
-      const res = await fetch(`${API_URL}?action=prize_config`);
-      const data = await res.json();
-      if (!data.ok) throw new Error("load prize config failed");
+  if (!pendingWinner) return;
 
-      prizeNames = (data.prizes || []).map(x => x.name);
-      prizeStatusMap = {};
-      (data.prizes || []).forEach(item => {
-        prizeStatusMap[item.name] = item;
-      });
-    }
+  await fetch(WEB_APP_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "confirmWinner",
+      phone: pendingWinner.phone
+    })
+  });
 
-    function buildPrizeButtons() {
-      prizeGridEl.innerHTML = "";
+  winners.push(pendingWinner.phone);
 
-      prizeNames.forEach(prize => {
-        const status = prizeStatusMap[prize] || { limit: 0, used: 0, remaining: 0, is_full: false };
-        const btn = document.createElement("button");
-        btn.className = "prizeBtn" + (status.is_full ? " full" : "");
-        btn.disabled = !!status.is_full;
+  pendingWinner = null;
 
-        btn.innerHTML = `
-          <div class="prizeName">${escapeHtml(prize)}</div>
-          <div class="prizeMeta">ใช้แล้ว ${status.used || 0} / ${status.limit || 0} เหลือ ${status.remaining || 0}</div>
-        `;
+  document.getElementById("winnerBox").innerText = "✅ บันทึกผู้ชนะแล้ว";
+  document.getElementById("confirmBtn").disabled = true;
+  document.getElementById("skipBtn").disabled = true;
+};
 
-        btn.onclick = () => {
-          if (status.is_full) return;
-          document.querySelectorAll(".prizeBtn").forEach(x => x.classList.remove("active"));
-          btn.classList.add("active");
-          selectedPrize = prize;
-          selectedPrizeEl.textContent = prize;
-          selectedMetaEl.textContent = `ใช้แล้ว ${status.used || 0} / ${status.limit || 0} เหลือ ${status.remaining || 0}`;
-          winnerPrizeEl.textContent = prize;
-        };
+// สุ่มใหม่ (ผู้รับไม่อยู่)
+document.getElementById("skipBtn").onclick = () => {
+  pendingWinner = null;
 
-        prizeGridEl.appendChild(btn);
-      });
-    }
+  document.getElementById("winnerBox").innerText = "❌ ข้ามผู้โชคดีคนนี้";
+  document.getElementById("confirmBtn").disabled = true;
+  document.getElementById("skipBtn").disabled = true;
 
-    async function reloadPrizes() {
-      await loadPrizeConfig();
-      buildPrizeButtons();
-    }
+  showWarning("");
+};
 
-    function startRollingVisual() {
-      winnerCard.style.display = "block";
-      confirmBtn.classList.remove("show");
-      winnerNameEl.className = "winnerName rolling";
-      winnerCodeEl.className = "codeValue";
-      winnerPrizeEl.textContent = selectedPrize || "-";
-      glowRingEl.classList.add("active");
+// init
+loadParticipants();
+</script>
 
-      rollingTimer = setInterval(() => {
-        winnerNameEl.textContent = randomThaiLikeName();
-        winnerMetaEl.innerHTML = "กำลังสุ่มผู้โชคดี...";
-        winnerCodeEl.textContent = randomCode();
-      }, 80);
-
-      return new Promise(resolve => {
-        setTimeout(() => {
-          clearInterval(rollingTimer);
-          resolve();
-        }, 3200);
-      });
-    }
-
-    function burstSparkles() {
-      sparklesEl.innerHTML = "";
-      for (let i = 0; i < 22; i++) {
-        const s = document.createElement("span");
-        s.className = "spark show";
-        s.style.left = (8 + Math.random() * 84) + "%";
-        s.style.top = (52 + Math.random() * 20) + "%";
-        s.style.animationDelay = (Math.random() * 0.25) + "s";
-        sparklesEl.appendChild(s);
-      }
-    }
-
-    function burstConfetti() {
-      confettiLayerEl.innerHTML = "";
-      const colors = ["#facc15", "#22c55e", "#8b5cf6", "#60a5fa", "#fb7185", "#f97316"];
-
-      for (let i = 0; i < 90; i++) {
-        const c = document.createElement("span");
-        c.className = "confetti";
-        c.style.left = (Math.random() * 100) + "%";
-        c.style.top = (-10 - Math.random() * 20) + "px";
-        c.style.background = colors[Math.floor(Math.random() * colors.length)];
-        c.style.animationDelay = (Math.random() * 0.3) + "s";
-        confettiLayerEl.appendChild(c);
-      }
-
-      setTimeout(() => {
-        confettiLayerEl.innerHTML = "";
-      }, 3200);
-    }
-
-    function renderWinner(winner, totalEligible, prizeData) {
-      currentWinner = winner;
-
-      winnerNameEl.className = "winnerName reveal";
-      winnerNameEl.textContent = winner.final_name || "-";
-
-      const remainText = prizeData ? `เหลือรางวัลนี้อีก ${prizeData.remaining} สิทธิ์` : "";
-      winnerMetaEl.innerHTML =
-        `เบอร์: ${escapeHtml(winner.phone || "-")}<br>${escapeHtml(remainText)}`;
-
-      winnerCodeEl.className = "codeValue reveal";
-      winnerCodeEl.textContent = winner.claim_code || "----";
-
-      poolCountEl.textContent = `จำนวนผู้มีสิทธิ์สุ่ม: ${totalEligible || 0} คน`;
-      glowRingEl.classList.remove("active");
-      burstSparkles();
-      burstConfetti();
-      confirmBtn.classList.add("show");
-    }
-
-    async function drawWinner() {
-      if (!selectedPrize) {
-        setMsg("กรุณาเลือกรางวัลก่อน", "err");
-        return;
-      }
-
-      try {
-        drawBtn.disabled = true;
-        confirmBtn.disabled = true;
-        setMsg("กำลังสุ่ม...");
-        await startRollingVisual();
-
-        const res = await fetch(`${API_URL}?action=lucky_draw_pick&prize_name=${encodeURIComponent(selectedPrize)}`);
-        const data = await res.json();
-
-        if (!data.ok) {
-          winnerCard.style.display = "none";
-          setMsg(data.message || "สุ่มไม่สำเร็จ", "err");
-          await reloadPrizes();
-          return;
-        }
-
-        renderWinner(data.winner, data.total_eligible, data);
-        setMsg("สุ่มสำเร็จ", "ok");
-        confirmBtn.disabled = false;
-      } catch (err) {
-        winnerCard.style.display = "none";
-        setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
-      } finally {
-        drawBtn.disabled = false;
-      }
-    }
-
-    async function confirmWinner() {
-      if (!currentWinner || !selectedPrize) {
-        setMsg("ยังไม่มีผู้โชคดี", "err");
-        return;
-      }
-
-      try {
-        confirmBtn.disabled = true;
-        setMsg("กำลังบันทึกผล...");
-
-        const url =
-          `${API_URL}?action=confirm_prize_winner` +
-          `&row=${encodeURIComponent(currentWinner.row)}` +
-          `&prize_name=${encodeURIComponent(selectedPrize)}` +
-          `&staff=${encodeURIComponent(STAFF_NAME)}` +
-          `&staff_token=${encodeURIComponent(STAFF_TOKEN)}`;
-
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (!data.ok) {
-          setMsg(data.message || "บันทึกผลไม่สำเร็จ", "err");
-          await reloadPrizes();
-          return;
-        }
-
-        setMsg(`ยืนยันผู้ได้รับรางวัลแล้ว: ${selectedPrize}`, "ok");
-        await reloadPrizes();
-
-        const latestPrizeData = prizeStatusMap[selectedPrize];
-        if (latestPrizeData && latestPrizeData.is_full) {
-          selectedPrize = null;
-          selectedPrizeEl.textContent = "ยังไม่ได้เลือกรางวัล";
-          selectedMetaEl.textContent = "รางวัลที่ครบจำนวนแล้วจะกดไม่ได้อัตโนมัติ";
-        }
-      } catch (err) {
-        setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
-      } finally {
-        confirmBtn.disabled = false;
-      }
-    }
-
-    drawBtn.addEventListener("click", drawWinner);
-    confirmBtn.addEventListener("click", confirmWinner);
-
-    reloadPrizes();
-  </script>
 </body>
 </html>
