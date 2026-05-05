@@ -15,164 +15,108 @@
   --yellow:#F7C948;
   --yellow2:#FFE08A;
   --dark:#111827;
+  --green:#16A34A;
+  --red:#DC2626;
+  --blue:#2563EB;
   --shadow:0 12px 32px rgba(17,24,39,.10);
 }
-
 *{box-sizing:border-box}
-
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  background:
-    radial-gradient(circle at top,#FFF4CC 0,#FFFDF7 42%,#FFFDF7 100%);
+  background:radial-gradient(circle at top,#FFF4CC 0,#FFFDF7 42%,#FFFDF7 100%);
   color:var(--text);
 }
-
-.wrap{
-  max-width:560px;
-  margin:auto;
-  padding:22px 16px 36px;
-}
-
-.header{
-  text-align:center;
-  margin-bottom:18px;
-}
-
-.logo{
-  width:78px;
-  height:78px;
-  margin:0 auto 12px;
-  border-radius:24px;
-  background:linear-gradient(145deg,var(--yellow),var(--yellow2));
-  display:grid;
-  place-items:center;
-  font-size:30px;
-  font-weight:1000;
-  box-shadow:0 12px 28px rgba(247,201,72,.35);
-  color:#111827;
-}
-
-.title{
-  font-size:24px;
-  font-weight:1000;
-  line-height:1.2;
-}
-
-.subtitle{
-  margin-top:6px;
-  font-size:13px;
-  font-weight:700;
-  color:var(--muted);
-}
-
-.section{
-  margin-top:16px;
-}
-
-.section-title{
-  font-size:13px;
-  font-weight:1000;
-  color:#92400E;
-  margin:0 0 8px;
-  padding-left:4px;
-}
-
-.grid{
-  display:grid;
-  gap:12px;
-}
-
-.card{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  text-decoration:none;
-  color:var(--text);
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:22px;
-  padding:16px;
-  box-shadow:var(--shadow);
-  transition:.15s ease;
-}
-
-.card:active{
-  transform:scale(.985);
-}
-
-.icon{
-  width:48px;
-  height:48px;
-  border-radius:17px;
-  display:grid;
-  place-items:center;
-  font-size:25px;
-  flex:0 0 auto;
-  background:#FFF4CC;
-  border:1px solid rgba(234,179,8,.25);
-}
-
-.main .icon{
-  background:linear-gradient(145deg,var(--yellow),var(--yellow2));
-}
-
-.content{
-  flex:1;
-  min-width:0;
-}
-
-.content b{
-  display:block;
-  font-size:16px;
-  font-weight:1000;
-}
-
-.content span{
-  display:block;
-  margin-top:4px;
-  font-size:12.5px;
-  font-weight:700;
-  color:var(--muted);
-  line-height:1.4;
-}
-
-.arrow{
-  font-size:22px;
-  color:#9CA3AF;
-  font-weight:900;
-}
-
-.footer{
-  margin-top:18px;
-  text-align:center;
-  font-size:11px;
-  font-weight:700;
-  color:#9CA3AF;
-}
+.wrap{max-width:760px;margin:auto;padding:22px 16px 38px}
+.header{text-align:center;margin-bottom:18px}
+.logo{width:78px;height:78px;margin:0 auto 12px;border-radius:24px;background:linear-gradient(145deg,var(--yellow),var(--yellow2));display:grid;place-items:center;font-size:30px;font-weight:1000;box-shadow:0 12px 28px rgba(247,201,72,.35);color:#111827}
+.title{font-size:24px;font-weight:1000;line-height:1.2}
+.subtitle{margin-top:6px;font-size:13px;font-weight:700;color:var(--muted)}
+.section{margin-top:16px}
+.section-title{font-size:13px;font-weight:1000;color:#92400E;margin:0 0 8px;padding-left:4px}
+.grid{display:grid;gap:12px}
+.card,.panel{background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+.card{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);padding:16px;transition:.15s ease}
+.card:active{transform:scale(.985)}
+.icon{width:48px;height:48px;border-radius:17px;display:grid;place-items:center;font-size:25px;flex:0 0 auto;background:#FFF4CC;border:1px solid rgba(234,179,8,.25)}
+.main .icon{background:linear-gradient(145deg,var(--yellow),var(--yellow2))}
+.content{flex:1;min-width:0}.content b{display:block;font-size:16px;font-weight:1000}.content span{display:block;margin-top:4px;font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.4}.arrow{font-size:22px;color:#9CA3AF;font-weight:900}
+.panel{padding:16px}
+.panelHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.panelTitle{font-size:18px;font-weight:1000}.panelSub{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px;line-height:1.45}
+.badge{display:inline-flex;align-items:center;gap:8px;min-height:34px;padding:6px 12px;border-radius:999px;background:#ECFDF5;color:#065F46;border:1px solid #BBF7D0;font-size:12px;font-weight:1000}.dot{width:9px;height:9px;border-radius:50%;background:#22C55E}.badge.off{background:#FEF2F2;color:#991B1B;border-color:#FECACA}.badge.off .dot{background:#EF4444}
+.eventBox{display:grid;gap:10px}.eventName{font-size:20px;font-weight:1000;line-height:1.25}.eventMeta{font-size:12.5px;color:var(--muted);font-weight:800;line-height:1.55}.selectRow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-top:12px}
+select,input,textarea{width:100%;min-height:46px;border:1px solid var(--border);border-radius:14px;padding:10px 12px;font-size:14px;font-weight:800;background:#fff;color:var(--text);outline:none}textarea{min-height:70px;resize:vertical}select:focus,input:focus,textarea:focus{border-color:#F59E0B;box-shadow:0 0 0 4px rgba(247,201,72,.22)}
+button{border:0;border-radius:14px;min-height:46px;padding:0 14px;font-size:14px;font-weight:1000;cursor:pointer;background:#111827;color:#fff;box-shadow:0 8px 18px rgba(17,24,39,.10)}button:disabled{opacity:.55;cursor:not-allowed}.btnYellow{background:linear-gradient(180deg,var(--yellow),var(--yellow2));color:#111827}.btnGreen{background:linear-gradient(180deg,#22C55E,#16A34A);color:#052e16}.btnRed{background:linear-gradient(180deg,#EF4444,#DC2626);color:#fff}.btnBlue{background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff}.btnGhost{background:#fff;color:#111827;border:1px solid var(--border);box-shadow:none}.btnWide{width:100%}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.actions.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.formGrid{display:grid;gap:10px}.formRow{display:grid;grid-template-columns:1fr 160px;gap:10px}.msg{min-height:22px;margin-top:10px;font-size:13px;font-weight:900;line-height:1.45}.msg.ok{color:#15803D}.msg.err{color:#B91C1C}.msg.warn{color:#92400E}
+.smallNote{margin-top:10px;font-size:12px;font-weight:800;color:#6B7280;line-height:1.5;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:14px;padding:10px 12px}.footer{margin-top:18px;text-align:center;font-size:11px;font-weight:700;color:#9CA3AF}.hidden{display:none!important}
+@media(max-width:620px){.wrap{padding:18px 12px 32px}.selectRow,.formRow,.actions,.actions.three{grid-template-columns:1fr}.title{font-size:22px}.eventName{font-size:18px}.card{padding:14px}.icon{width:44px;height:44px}}
 </style>
 </head>
-
 <body>
-
 <div class="wrap">
-
   <div class="header">
     <div class="logo">LP</div>
     <div class="title">LEEPLUS EVENT PORTAL</div>
-    <div class="subtitle">ศูนย์รวมทางเข้าระบบงานอบรม / เช็คอิน / สุ่มรางวัล</div>
+    <div class="subtitle">ศูนย์ควบคุม Event / ลงทะเบียน / เช็คอิน / Dashboard / Lucky Draw</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">ควบคุม Event ปัจจุบัน</div>
+    <div class="panel">
+      <div class="panelHead">
+        <div>
+          <div class="panelTitle">Active Event</div>
+          <div class="panelSub">ทุกหน้าเดิมจะใช้ Event นี้อัตโนมัติ โดยไม่ต้องเข้าไปแก้ใน Google Sheet</div>
+        </div>
+        <div class="badge" id="regBadge"><span class="dot"></span><span id="regBadgeText">กำลังโหลด...</span></div>
+      </div>
+
+      <div class="eventBox">
+        <div class="eventName" id="activeEventName">กำลังโหลด Event...</div>
+        <div class="eventMeta" id="activeEventMeta">-</div>
+      </div>
+
+      <div class="selectRow">
+        <select id="eventSelect"></select>
+        <button class="btnBlue" id="setActiveBtn">ตั้งเป็น Event ปัจจุบัน</button>
+      </div>
+
+      <div class="actions three">
+        <button class="btnGreen" id="openRegBtn">เปิดลงทะเบียน</button>
+        <button class="btnRed" id="closeRegBtn">ปิดลงทะเบียน</button>
+        <button class="btnGhost" id="reloadBtn">รีเฟรช</button>
+      </div>
+
+      <div class="msg" id="eventMsg"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">สร้าง Event ใหม่</div>
+    <div class="panel">
+      <div class="formGrid">
+        <div>
+          <input id="newEventName" type="text" placeholder="ชื่อ Event เช่น งานอบรม LEEPLUS รอบ 2">
+        </div>
+        <div class="formRow">
+          <input id="newEventDate" type="date">
+          <input id="newDeposit" type="number" value="1000" placeholder="มัดจำ">
+        </div>
+        <textarea id="newNote" placeholder="หมายเหตุ เช่น สถานที่ / รอบงาน / รายละเอียดภายใน"></textarea>
+        <button class="btnYellow btnWide" id="createEventBtn">สร้าง Event ใหม่ และตั้งเป็น Event ปัจจุบัน</button>
+      </div>
+      <div class="smallNote">เมื่อสร้าง Event ระบบจะสร้างชีทใหม่ให้อัตโนมัติ เช่น registrations_EVT..., prize_config_EVT..., checkin_log_EVT... และตั้งเป็น Active ให้ทันที</div>
+      <div class="msg" id="createMsg"></div>
+    </div>
   </div>
 
   <div class="section">
     <div class="section-title">ลูกค้า / ผู้ลงทะเบียน</div>
     <div class="grid">
       <a class="card main" href="https://omrjco.github.io/event-register/">
-        <div class="icon">📋</div>
-        <div class="content">
-          <b>ลงทะเบียน / เช็คสถานะ</b>
-          <span>หน้าหลักสำหรับลูกค้า ใช้ดูสถานะหลังปิดรับลงทะเบียน</span>
-        </div>
-        <div class="arrow">›</div>
+        <div class="icon">📋</div><div class="content"><b>ลงทะเบียน / เช็คสถานะ</b><span>หน้าเดิมจะบันทึกเข้า Active Event ที่เลือกจาก Portal</span></div><div class="arrow">›</div>
       </a>
     </div>
   </div>
@@ -180,63 +124,171 @@ body{
   <div class="section">
     <div class="section-title">ทีมงานหน้างาน</div>
     <div class="grid">
-      <a class="card" href="checkin.html">
-        <div class="icon">✅</div>
-        <div class="content">
-          <b>เช็คอินหน้างาน</b>
-          <span>ค้นหาผู้ลงทะเบียน และบันทึก CHECKED_IN</span>
-        </div>
-        <div class="arrow">›</div>
-      </a>
-
-      <a class="card" href="staff.html">
-        <div class="icon">👨‍💼</div>
-        <div class="content">
-          <b>Staff จัดการสิทธิ์</b>
-          <span>คืนเงินมัดจำ / แจกของ / ตรวจสิทธิ์เพิ่มเติม</span>
-        </div>
-        <div class="arrow">›</div>
-      </a>
-
-      <a class="card" href="dashboard.html">
-        <div class="icon">📊</div>
-        <div class="content">
-          <b>Dashboard ภาพรวม</b>
-          <span>ดูยอดลงทะเบียน ยอดเช็คอิน และรายการล่าสุด</span>
-        </div>
-        <div class="arrow">›</div>
-      </a>
+      <a class="card" href="checkin.html"><div class="icon">✅</div><div class="content"><b>เช็คอินหน้างาน</b><span>ค้นหาและบันทึก CHECKED_IN จาก Active Event</span></div><div class="arrow">›</div></a>
+      <a class="card" href="staff.html"><div class="icon">👨‍💼</div><div class="content"><b>Staff จัดการสิทธิ์</b><span>คืนเงินมัดจำ / แจกของ / ตรวจสิทธิ์จาก Active Event</span></div><div class="arrow">›</div></a>
+      <a class="card" href="dashboard.html"><div class="icon">📊</div><div class="content"><b>Dashboard ภาพรวม</b><span>ดูยอดลงทะเบียน เช็คอิน และรายงานของ Active Event</span></div><div class="arrow">›</div></a>
     </div>
   </div>
 
   <div class="section">
     <div class="section-title">กิจกรรม / หลังบ้าน</div>
     <div class="grid">
-      <a class="card" href="luckydraw-tv.html">
-        <div class="icon">🎲</div>
-        <div class="content">
-          <b>Lucky Draw TV</b>
-          <span>หน้าจอสุ่มรางวัล สำหรับเปิดขึ้นจอใหญ่</span>
-        </div>
-        <div class="arrow">›</div>
-      </a>
-
-      <a class="card" href="registration-control.html">
-        <div class="icon">⚙️</div>
-        <div class="content">
-          <b>เปิด / ปิด ลงทะเบียน</b>
-          <span>ควบคุมสถานะการรับลงทะเบียนจากหลังบ้าน</span>
-        </div>
-        <div class="arrow">›</div>
-      </a>
+      <a class="card" href="luckydraw-tv.html"><div class="icon">🎲</div><div class="content"><b>Lucky Draw TV</b><span>สุ่มรางวัลจาก Active Event เท่านั้น</span></div><div class="arrow">›</div></a>
+      <a class="card" href="registration-control.html"><div class="icon">⚙️</div><div class="content"><b>เปิด / ปิด ลงทะเบียน</b><span>ยังเข้าได้เหมือนเดิม หรือควบคุมจากหน้านี้ได้เลย</span></div><div class="arrow">›</div></a>
     </div>
   </div>
 
-  <div class="footer">
-    LEEPLUS SYSTEM
-  </div>
-
+  <div class="footer">LEEPLUS SYSTEM</div>
 </div>
 
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxZoooaEtBsLKUm3ppv-AIVipnC2w2WptAx5YHYwkfLZSTwIuMT7NRy0nHGZjY-AjSF/exec";
+const STAFF_TOKEN = "LEEPLUS_CHECKIN_2026";
+
+const eventSelect = document.getElementById("eventSelect");
+const activeEventName = document.getElementById("activeEventName");
+const activeEventMeta = document.getElementById("activeEventMeta");
+const eventMsg = document.getElementById("eventMsg");
+const createMsg = document.getElementById("createMsg");
+const regBadge = document.getElementById("regBadge");
+const regBadgeText = document.getElementById("regBadgeText");
+
+let events = [];
+let activeEventId = "LEGACY";
+
+function setMsg(el, text, type){
+  el.className = "msg " + (type || "");
+  el.textContent = text || "";
+}
+function escapeHtml(s){
+  return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#039;");
+}
+async function api(params){
+  const url = API_URL + "?" + new URLSearchParams(params).toString();
+  const res = await fetch(url);
+  return await res.json();
+}
+function findActive(){
+  return events.find(e => e.event_id === activeEventId) || events[0] || null;
+}
+function renderEvents(){
+  eventSelect.innerHTML = "";
+  events.forEach(ev => {
+    const opt = document.createElement("option");
+    opt.value = ev.event_id;
+    opt.textContent = `${ev.event_name || ev.event_id} (${ev.event_id})`;
+    if (ev.event_id === activeEventId) opt.selected = true;
+    eventSelect.appendChild(opt);
+  });
+
+  const active = findActive();
+  if (!active) {
+    activeEventName.textContent = "ยังไม่มี Event";
+    activeEventMeta.textContent = "กดสร้าง Event ใหม่เพื่อเริ่มใช้งาน";
+    return;
+  }
+
+  activeEventName.textContent = active.event_name || active.event_id;
+  activeEventMeta.innerHTML = [
+    `Event ID: <b>${escapeHtml(active.event_id)}</b>`,
+    `ข้อมูล: <b>${escapeHtml(active.reg_sheet || active.registrations_sheet || "-")}</b>`,
+    `รางวัล: <b>${escapeHtml(active.prize_sheet || active.prize_config_sheet || "-")}</b>`,
+    active.event_date ? `วันที่: <b>${escapeHtml(active.event_date)}</b>` : "",
+    active.deposit ? `มัดจำ: <b>${escapeHtml(active.deposit)}</b>` : ""
+  ].filter(Boolean).join(" · ");
+}
+async function loadAll(){
+  setMsg(eventMsg, "กำลังโหลดข้อมูล...", "warn");
+  try {
+    const data = await api({ action:"event_list", staff_token: STAFF_TOKEN });
+    if (!data.ok) throw new Error(data.message || "โหลด Event ไม่สำเร็จ");
+    events = data.events || [];
+    activeEventId = data.active_event_id || "LEGACY";
+    renderEvents();
+
+    const reg = await api({ action:"registration_settings", staff_token: STAFF_TOKEN });
+    if (reg.ok) {
+      const isOpen = !!reg.registration_open;
+      regBadge.className = isOpen ? "badge" : "badge off";
+      regBadgeText.textContent = isOpen ? "เปิดลงทะเบียน" : "ปิดลงทะเบียน";
+    }
+    setMsg(eventMsg, "พร้อมใช้งาน", "ok");
+  } catch (err) {
+    setMsg(eventMsg, err.message || "เชื่อมต่อระบบไม่สำเร็จ", "err");
+  }
+}
+async function setActiveEvent(){
+  const eventId = eventSelect.value;
+  if (!eventId) return setMsg(eventMsg, "กรุณาเลือก Event", "err");
+  setMsg(eventMsg, "กำลังตั้งค่า Active Event...", "warn");
+  try {
+    const data = await api({ action:"set_active_event", event_id:eventId, staff_token:STAFF_TOKEN });
+    if (!data.ok) throw new Error(data.message || "ตั้งค่าไม่สำเร็จ");
+    activeEventId = data.active_event_id || eventId;
+    renderEvents();
+    setMsg(eventMsg, "ตั้งเป็น Event ปัจจุบันแล้ว", "ok");
+  } catch (err) {
+    setMsg(eventMsg, err.message || "ตั้งค่าไม่สำเร็จ", "err");
+  }
+}
+async function createEvent(){
+  const name = document.getElementById("newEventName").value.trim();
+  const eventDate = document.getElementById("newEventDate").value;
+  const deposit = document.getElementById("newDeposit").value || "1000";
+  const note = document.getElementById("newNote").value.trim();
+  if (!name) return setMsg(createMsg, "กรุณากรอกชื่อ Event", "err");
+
+  const ok = confirm(`สร้าง Event ใหม่และตั้งเป็น Event ปัจจุบันใช่ไหม?\n\n${name}`);
+  if (!ok) return;
+
+  setMsg(createMsg, "กำลังสร้าง Event และชีทใหม่...", "warn");
+  document.getElementById("createEventBtn").disabled = true;
+  try {
+    const data = await api({
+      action:"create_event",
+      event_name:name,
+      event_date:eventDate,
+      deposit:deposit,
+      note:note,
+      set_active:"TRUE",
+      staff_token:STAFF_TOKEN
+    });
+    if (!data.ok) throw new Error(data.message || "สร้าง Event ไม่สำเร็จ");
+    document.getElementById("newEventName").value = "";
+    document.getElementById("newEventDate").value = "";
+    document.getElementById("newDeposit").value = "1000";
+    document.getElementById("newNote").value = "";
+    setMsg(createMsg, `สร้างสำเร็จ: ${data.event.event_id}`, "ok");
+    await loadAll();
+  } catch (err) {
+    setMsg(createMsg, err.message || "สร้าง Event ไม่สำเร็จ", "err");
+  } finally {
+    document.getElementById("createEventBtn").disabled = false;
+  }
+}
+async function setRegistration(open){
+  setMsg(eventMsg, open ? "กำลังเปิดลงทะเบียน..." : "กำลังปิดลงทะเบียน...", "warn");
+  try {
+    const data = await api({
+      action:"set_registration_open",
+      open: open ? "TRUE" : "FALSE",
+      staff_token: STAFF_TOKEN
+    });
+    if (!data.ok) throw new Error(data.message || "อัปเดตไม่สำเร็จ");
+    await loadAll();
+    setMsg(eventMsg, data.message || "อัปเดตแล้ว", "ok");
+  } catch (err) {
+    setMsg(eventMsg, err.message || "อัปเดตไม่สำเร็จ", "err");
+  }
+}
+
+document.getElementById("setActiveBtn").addEventListener("click", setActiveEvent);
+document.getElementById("createEventBtn").addEventListener("click", createEvent);
+document.getElementById("reloadBtn").addEventListener("click", loadAll);
+document.getElementById("openRegBtn").addEventListener("click", () => setRegistration(true));
+document.getElementById("closeRegBtn").addEventListener("click", () => setRegistration(false));
+
+loadAll();
+</script>
 </body>
 </html>
