@@ -41,6 +41,28 @@
       margin-top: 6px;
     }
 
+
+    .activeEventBox {
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #fff7d6;
+      border: 1px solid #facc15;
+      color: #92400e;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.5;
+      box-shadow: 0 8px 20px rgba(250,204,21,.10);
+    }
+
+    .activeEventBox small {
+      display: block;
+      margin-top: 3px;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
     .refreshBtn {
       border: 0;
       background: #111827;
@@ -364,6 +386,11 @@
       </div>
     </div>
 
+    <div id="activeEventBox" class="activeEventBox">
+      Event ปัจจุบัน: กำลังโหลด...
+      <small>Dashboard จะแสดงข้อมูลตาม Event ที่ตั้งไว้ใน Portal</small>
+    </div>
+
     <div id="reportResult" class="reportResult">
       <div class="reportResultTitle">สร้างรายงานเรียบร้อยแล้ว</div>
       <div id="reportResultText">ระบบสร้างไฟล์รายงานให้แล้ว</div>
@@ -465,6 +492,7 @@
     const reportResultTextEl = document.getElementById("reportResultText");
     const reportSheetLinkEl = document.getElementById("reportSheetLink");
     const reportExcelLinkEl = document.getElementById("reportExcelLink");
+    const activeEventBoxEl = document.getElementById("activeEventBox");
 
     function escapeHtml(str) {
       return String(str || "")
@@ -473,6 +501,33 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+    }
+
+    async function loadActiveEvent() {
+      try {
+        const res = await fetch(`${API_URL}?action=event_list&t=${Date.now()}`);
+        const data = await res.json();
+
+        if (!data.ok) {
+          activeEventBoxEl.innerHTML = `Event ปัจจุบัน: โหลดข้อมูลไม่สำเร็จ<small>Dashboard จะแสดงข้อมูลตาม Event ที่ตั้งไว้ใน Portal</small>`;
+          return;
+        }
+
+        const activeId = data.active_event_id || "";
+        const active = (data.events || []).find(e => e.event_id === activeId);
+
+        if (active) {
+          activeEventBoxEl.innerHTML =
+            `Event ปัจจุบัน: ${escapeHtml(active.event_name || "-")} (${escapeHtml(active.event_id || "-")})` +
+            `<small>ชีทข้อมูล: ${escapeHtml(active.reg_sheet || active.registrations_sheet || "-")}</small>`;
+        } else {
+          activeEventBoxEl.innerHTML =
+            `Event ปัจจุบัน: ${escapeHtml(activeId || "ยังไม่ได้ตั้ง Active Event")}` +
+            `<small>Dashboard จะแสดงข้อมูลตาม Event ที่ตั้งไว้ใน Portal</small>`;
+        }
+      } catch (err) {
+        activeEventBoxEl.innerHTML = `Event ปัจจุบัน: เชื่อมต่อระบบไม่สำเร็จ<small>Dashboard จะแสดงข้อมูลตาม Event ที่ตั้งไว้ใน Portal</small>`;
+      }
     }
 
     function renderLatest(items) {
@@ -593,9 +648,11 @@
         refreshBtn.disabled = true;
         refreshBtn.textContent = "กำลังโหลด...";
 
+        await loadActiveEvent();
+
         const [summaryRes, shirtRes] = await Promise.all([
-          fetch(`${API_URL}?action=dashboard_summary`),
-          fetch(`${API_URL}?action=shirt_summary`)
+          fetch(`${API_URL}?action=dashboard_summary&t=${Date.now()}`),
+          fetch(`${API_URL}?action=shirt_summary&t=${Date.now()}`)
         ]);
 
         const data = await summaryRes.json();
