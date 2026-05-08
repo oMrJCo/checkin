@@ -801,13 +801,13 @@
         winnerMetaEl.innerHTML = "กำลังสุ่มผู้โชคดี...";
         winnerCodeEl.textContent = randomCode();
         poolCountEl.textContent = "กำลังประมวลผลรายชื่อผู้มีสิทธิ์...";
-      }, 75);
+      }, 55);
 
       return new Promise(resolve => {
         setTimeout(() => {
           clearInterval(rollingTimer);
           resolve();
-        }, 3600);
+        }, 5000);
       });
     }
 
