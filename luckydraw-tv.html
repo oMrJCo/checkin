@@ -699,6 +699,13 @@
     let rollingTimer = null;
     let isLocked = false;
 
+    // ปรับเวลาสุ่มตรงนี้ได้เลย
+    // ROLL_MIN_DURATION_MS = เวลาขั้นต่ำก่อนโชว์ popup ผู้ชนะ
+    // ROLL_NAME_INTERVAL_MS = ความเร็วชื่อวิ่งระหว่างสุ่ม
+    const ROLL_MIN_DURATION_MS = 2600;
+    const ROLL_NAME_INTERVAL_MS = 55;
+    const CONFETTI_CLEAR_MS = 1400;
+
     function setMsg(text, type = "") {
       msgEl.className = "msg " + type;
       msgEl.textContent = text || "";
@@ -801,13 +808,13 @@
         winnerMetaEl.innerHTML = "กำลังสุ่มผู้โชคดี...";
         winnerCodeEl.textContent = randomCode();
         poolCountEl.textContent = "กำลังประมวลผลรายชื่อผู้มีสิทธิ์...";
-      }, 55);
+      }, ROLL_NAME_INTERVAL_MS);
 
       return new Promise(resolve => {
         setTimeout(() => {
           clearInterval(rollingTimer);
           resolve();
-        }, 5000);
+        }, ROLL_MIN_DURATION_MS);
       });
     }
 
@@ -839,7 +846,7 @@
 
       setTimeout(() => {
         confettiLayerEl.innerHTML = "";
-      }, 1200);
+      }, CONFETTI_CLEAR_MS);
     }
 
     function renderWinner(winner, totalEligible, prizeData) {
@@ -880,11 +887,25 @@
       try {
         drawBtn.disabled = true;
         confirmBtn.disabled = true;
+        resetBtn.disabled = true;
         setMsg("กำลังสุ่ม...");
-        await startRollingVisual();
 
-        const res = await fetch(`${API_URL}?action=lucky_draw_pick&prize_name=${encodeURIComponent(selectedPrize)}`);
-        const data = await res.json();
+        // สำคัญ: ยิง API พร้อมกับ animation เลย ไม่รอ animation จบก่อน
+        // เดิม: animation 3-7 วิ แล้วค่อย fetch ทำให้ popup ช้าเกิน 10 วิ
+        const apiPromise = fetch(
+          `${API_URL}?action=lucky_draw_pick&prize_name=${encodeURIComponent(selectedPrize)}&t=${Date.now()}`
+        ).then(res => res.json());
+
+        const visualPromise = startRollingVisual();
+
+        const results = await Promise.allSettled([apiPromise, visualPromise]);
+        const apiResult = results[0];
+
+        if (apiResult.status !== "fulfilled") {
+          throw apiResult.reason || new Error("API error");
+        }
+
+        const data = apiResult.value;
 
         if (!data.ok) {
           if (data.pending && data.winner) {
@@ -916,9 +937,16 @@
         renderWinner(data.winner, data.total_eligible, data);
         setMsg("สุ่มสำเร็จ", "ok");
         confirmBtn.disabled = false;
+        resetBtn.disabled = false;
       } catch (err) {
         setMsg("เชื่อมต่อระบบไม่สำเร็จ", "err");
         footerLeftEl.textContent = "เชื่อมต่อระบบไม่สำเร็จ";
+        winnerNameEl.className = "winnerName";
+        winnerNameEl.textContent = "สุ่มไม่สำเร็จ";
+        winnerMetaEl.textContent = "เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่";
+        winnerCodeEl.textContent = "----";
+        poolCountEl.textContent = "รอเริ่มสุ่ม";
+        glowRingEl.classList.remove("active");
       } finally {
         drawBtn.disabled = isLocked ? true : false;
       }
