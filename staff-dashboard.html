@@ -93,6 +93,23 @@
       +'</div>'+note+'</div>'
   }
 
+
+  async function recheckSlip(row){
+    if(!row){ el('msg').className='msg err'; el('msg').textContent='ไม่พบแถวข้อมูลสำหรับตรวจสลิป'; return; }
+    try{
+      el('msg').className='msg';
+      el('msg').textContent='กำลังให้ Gemini ตรวจสลิปใหม่...';
+      var res=await api({action:'staff_recheck_slip',staff_token:STAFF_TOKEN,row:row,t:Date.now()});
+      if(!res.ok) throw new Error(res.message||res.note||'ตรวจสลิปใหม่ไม่สำเร็จ');
+      el('msg').className='msg ok';
+      el('msg').textContent='ตรวจสลิปใหม่แล้ว: '+(res.status||'-')+(res.note?' — '+res.note:'');
+      await loadData();
+    }catch(e){
+      el('msg').className='msg err';
+      el('msg').textContent='ตรวจสลิปใหม่ไม่ได้: '+e.message;
+    }
+  }
+
   async function updateStatus(row,status){var note=''; if(status==='rejected') note=prompt('ใส่หมายเหตุไม่ผ่าน (เว้นว่างได้)','')||''; try{el('msg').className='msg';el('msg').textContent='กำลังอัปเดต...';var res=await api({action:'staff_update_status',staff_token:STAFF_TOKEN,row:row,status:status,note:note}); if(!res.ok)throw new Error(res.message||'อัปเดตไม่สำเร็จ'); await loadData()}catch(e){el('msg').className='msg err';el('msg').textContent=e.message}}
   function clearFilters(){el('q').value='';el('statusFilter').value='';el('slipFilter').value='';document.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('active',c.dataset.slip==='')});render()}
   function quickSlip(btn,val){el('slipFilter').value=val;document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active')});btn.classList.add('active');render()}
