@@ -45,9 +45,9 @@
   <div class="wrap">
     <section class="hero"><div><small>ACTIVE EVENT</small><h1 id="eventName">กำลังโหลด...</h1><p id="eventSub">ระบบจะดึงรายการล่าสุดจาก Google Sheet</p></div><div class="pill-live">● พร้อมใช้งาน</div></section>
     <section class="stats" id="summary"></section>
-    <section class="filters"><div><label>ค้นหา</label><input id="q" placeholder="ชื่อ / เบอร์ / Facebook / Line / group_ref" oninput="render()"></div><div><label>สถานะอนุมัติ</label><select id="statusFilter" onchange="render()"><option value="">ทั้งหมด</option><option value="pending">รออนุมัติ</option><option value="approved">อนุมัติแล้ว</option><option value="rejected">ไม่ผ่าน</option></select></div><div><label>สถานะสลิป</label><select id="slipFilter" onchange="render()"><option value="">ทั้งหมด</option><option value="PASS_BASIC">ผ่านเบื้องต้น</option><option value="WAITING_CHECK">รอตรวจ</option><option value="AMOUNT_MISMATCH">ยอดไม่ตรง</option><option value="ACCOUNT_MISMATCH">บัญชีไม่ตรง</option><option value="AMOUNT_AND_ACCOUNT_MISMATCH">ยอด+บัญชีไม่ตรง</option><option value="SLIP_READ_FAILED">อ่านสลิปไม่ได้</option><option value="FILE_ERROR">ไฟล์มีปัญหา</option><option value="NEED_RESUBMIT">ขอส่งใหม่</option><option value="REJECTED">ไม่ผ่าน</option></select></div><button class="btn btn-light" onclick="clearFilters()">ล้างตัวกรอง</button></section>
-    <div class="quick"><button class="chip active" data-slip="" onclick="quickSlip(this,'')">ทั้งหมด</button><button class="chip" data-slip="WAITING_CHECK" onclick="quickSlip(this,'WAITING_CHECK')">รอตรวจสลิป</button><button class="chip" data-slip="PASS_BASIC" onclick="quickSlip(this,'PASS_BASIC')">ผ่านเบื้องต้น</button><button class="chip" data-slip="AMOUNT_MISMATCH" onclick="quickSlip(this,'AMOUNT_MISMATCH')">ยอดไม่ตรง</button><button class="chip" data-slip="ACCOUNT_MISMATCH" onclick="quickSlip(this,'ACCOUNT_MISMATCH')">บัญชีไม่ตรง</button><button class="chip" data-slip="SLIP_READ_FAILED" onclick="quickSlip(this,'SLIP_READ_FAILED')">อ่านไม่ได้</button><button class="chip" data-slip="FILE_ERROR" onclick="quickSlip(this,'FILE_ERROR')">ไฟล์มีปัญหา</button></div>
-    <div class="groupbar"><div class="groupbar-left"><button class="btn btn-dark tiny" onclick="approveVisibleGroups()">อนุมัติทั้งกลุ่มที่เห็น</button><button class="btn btn-light tiny" onclick="showOnlyProblem()">ดูเฉพาะสลิปมีปัญหา</button><small id="autoInfo">Auto refresh: เปิด</small></div><label class="toggle"><input id="autoRefresh" type="checkbox" checked onchange="toggleAuto()"> รีเฟรชอัตโนมัติ</label></div>
+    <section class="filters"><div><label>ค้นหา</label><input id="q" placeholder="ชื่อ / เบอร์ / Facebook / Line / group_ref" oninput="render()"></div><div><label>สถานะอนุมัติ</label><select id="statusFilter" onchange="render()"><option value="">ทั้งหมด</option><option value="pending">รออนุมัติ</option><option value="approved">อนุมัติแล้ว</option><option value="rejected">ไม่ผ่าน</option></select></div><div><label>สถานะสลิป</label><select id="slipFilter" onchange="render()"><option value="">ทั้งหมด</option><option value="PASS_BASIC">ผ่านเบื้องต้น</option><option value="WAITING_CHECK">รอตรวจ</option><option value="AMOUNT_MISMATCH">ยอดไม่ตรง</option><option value="ACCOUNT_MISMATCH">บัญชีไม่ตรง</option><option value="AMOUNT_AND_ACCOUNT_MISMATCH">ยอด+บัญชีไม่ตรง</option><option value="SLIP_READ_FAILED">อ่านสลิปไม่ได้</option><option value="GEMINI_RATE_LIMIT">รอคิว Gemini</option><option value="FILE_ERROR">ไฟล์มีปัญหา</option><option value="NEED_RESUBMIT">ขอส่งใหม่</option><option value="REJECTED">ไม่ผ่าน</option></select></div><button class="btn btn-light" onclick="clearFilters()">ล้างตัวกรอง</button></section>
+    <div class="quick"><button class="chip active" data-slip="" onclick="quickSlip(this,'')">ทั้งหมด</button><button class="chip" data-slip="WAITING_CHECK" onclick="quickSlip(this,'WAITING_CHECK')">รอตรวจสลิป</button><button class="chip" data-slip="PASS_BASIC" onclick="quickSlip(this,'PASS_BASIC')">ผ่านเบื้องต้น</button><button class="chip" data-slip="AMOUNT_MISMATCH" onclick="quickSlip(this,'AMOUNT_MISMATCH')">ยอดไม่ตรง</button><button class="chip" data-slip="ACCOUNT_MISMATCH" onclick="quickSlip(this,'ACCOUNT_MISMATCH')">บัญชีไม่ตรง</button><button class="chip" data-slip="SLIP_READ_FAILED" onclick="quickSlip(this,'SLIP_READ_FAILED')">อ่านไม่ได้</button><button class="chip" data-slip="GEMINI_RATE_LIMIT" onclick="quickSlip(this,'GEMINI_RATE_LIMIT')">รอคิว Gemini</button><button class="chip" data-slip="FILE_ERROR" onclick="quickSlip(this,'FILE_ERROR')">ไฟล์มีปัญหา</button></div>
+    <div class="groupbar"><div class="groupbar-left"><button class="btn btn-dark tiny" onclick="approveVisibleGroups()">อนุมัติทั้งกลุ่มที่เห็น</button><button class="btn btn-light tiny" onclick="showOnlyProblem()">ดูเฉพาะสลิปมีปัญหา</button><button class="btn btn-orange tiny" id="btnQueue" onclick="recheckPendingQueue()">ตรวจสลิปที่รอตรวจ</button><small id="autoInfo">Auto refresh: เปิด</small></div><label class="toggle"><input id="autoRefresh" type="checkbox" checked onchange="toggleAuto()"> รีเฟรชอัตโนมัติ</label></div>
     <p id="msg" class="msg"></p>
     <section class="table-card" id="table"><div class="empty">กำลังโหลดข้อมูล...</div></section>
   </div>
@@ -61,7 +61,7 @@
   function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function money(n){n=Number(String(n||0).replace(/[^0-9.]/g,''))||0;return '฿'+n.toLocaleString('th-TH')}
   async function api(params){var url=WEB_APP_URL+'?'+new URLSearchParams(Object.assign({t:Date.now()},params)).toString();var r=await fetch(url);var txt=await r.text();try{return JSON.parse(txt)}catch(e){throw new Error(txt.slice(0,160))}}
-  function slipBadge(st){st=String(st||'WAITING_CHECK').toUpperCase(); if(st==='PASS_BASIC')return '<span class="badge b-green"><span class="dot"></span>ยอด+บัญชีตรง</span>'; if(st==='AMOUNT_MISMATCH')return '<span class="badge b-red"><span class="dot"></span>ยอดไม่ตรง</span>'; if(st==='ACCOUNT_MISMATCH')return '<span class="badge b-red"><span class="dot"></span>บัญชีไม่ตรง</span>'; if(st==='AMOUNT_AND_ACCOUNT_MISMATCH')return '<span class="badge b-red"><span class="dot"></span>ยอด+บัญชีผิด</span>'; if(st==='SLIP_READ_FAILED')return '<span class="badge b-orange"><span class="dot"></span>อ่านสลิปไม่ได้</span>'; if(st==='WAITING_GEMINI_CHECK')return '<span class="badge b-yellow"><span class="dot"></span>กำลังตรวจ</span>'; if(st==='FILE_ERROR')return '<span class="badge b-red"><span class="dot"></span>ไฟล์มีปัญหา</span>'; if(st==='NEED_RESUBMIT')return '<span class="badge b-orange"><span class="dot"></span>ขอส่งใหม่</span>'; if(st==='APPROVED')return '<span class="badge b-blue"><span class="dot"></span>สลิปอนุมัติ</span>'; if(st==='REJECTED')return '<span class="badge b-red"><span class="dot"></span>สลิปไม่ผ่าน</span>'; return '<span class="badge b-yellow"><span class="dot"></span>รอตรวจสลิป</span>'}
+  function slipBadge(st){st=String(st||'WAITING_CHECK').toUpperCase(); if(st==='PASS_BASIC')return '<span class="badge b-green"><span class="dot"></span>ยอด+บัญชีตรง</span>'; if(st==='AMOUNT_MISMATCH')return '<span class="badge b-red"><span class="dot"></span>ยอดไม่ตรง</span>'; if(st==='ACCOUNT_MISMATCH')return '<span class="badge b-red"><span class="dot"></span>บัญชีไม่ตรง</span>'; if(st==='AMOUNT_AND_ACCOUNT_MISMATCH')return '<span class="badge b-red"><span class="dot"></span>ยอด+บัญชีผิด</span>'; if(st==='GEMINI_RATE_LIMIT')return '<span class="badge b-orange"><span class="dot"></span>รอคิว Gemini</span>'; if(st==='SLIP_READ_FAILED')return '<span class="badge b-orange"><span class="dot"></span>อ่านสลิปไม่ได้</span>'; if(st==='WAITING_GEMINI_CHECK')return '<span class="badge b-yellow"><span class="dot"></span>กำลังตรวจ</span>'; if(st==='FILE_ERROR')return '<span class="badge b-red"><span class="dot"></span>ไฟล์มีปัญหา</span>'; if(st==='NEED_RESUBMIT')return '<span class="badge b-orange"><span class="dot"></span>ขอส่งใหม่</span>'; if(st==='APPROVED')return '<span class="badge b-blue"><span class="dot"></span>สลิปอนุมัติ</span>'; if(st==='REJECTED')return '<span class="badge b-red"><span class="dot"></span>สลิปไม่ผ่าน</span>'; return '<span class="badge b-yellow"><span class="dot"></span>รอตรวจสลิป</span>'}
   function approveBadge(st){st=String(st||'pending').toLowerCase(); if(st==='approved')return '<span class="badge b-green"><span class="dot"></span>อนุมัติ</span>'; if(st==='rejected')return '<span class="badge b-red"><span class="dot"></span>ไม่ผ่าน</span>'; return '<span class="badge b-yellow"><span class="dot"></span>รออนุมัติ</span>'}
   function checkBadge(st){st=String(st||'').toUpperCase(); return st==='CHECKED_IN'?'<span class="badge b-blue"><span class="dot"></span>เช็กอินแล้ว</span>':'<span class="badge b-gray"><span class="dot"></span>ยังไม่เช็กอิน</span>'}
   function giftBadge(st){st=String(st||'').toUpperCase(); return st==='RECEIVED'?'<span class="badge b-green"><span class="dot"></span>รับแล้ว</span>':'<span class="badge b-gray"><span class="dot"></span>ยังไม่รับ</span>'}
@@ -94,19 +94,72 @@
   }
 
 
-  async function recheckSlip(row){
-    if(!row){ el('msg').className='msg err'; el('msg').textContent='ไม่พบแถวข้อมูลสำหรับตรวจสลิป'; return; }
+  function sleep(ms){return new Promise(function(resolve){setTimeout(resolve,ms)})}
+  function isPendingSlipStatus(st){
+    st=String(st||'').toUpperCase();
+    return !st || ['WAITING_CHECK','WAITING_GEMINI_CHECK','SLIP_READ_FAILED','GEMINI_RATE_LIMIT','FILE_ERROR','WAITING_MANUAL_CHECK'].indexOf(st)>-1;
+  }
+
+  async function recheckSlip(row, opts){
+    opts=opts||{};
+    if(!row){ el('msg').className='msg err'; el('msg').textContent='ไม่พบแถวข้อมูลสำหรับตรวจสลิป'; return null; }
     try{
       el('msg').className='msg';
-      el('msg').textContent='กำลังให้ Gemini ตรวจสลิปใหม่...';
-      var res=await api({action:'staff_recheck_slip',staff_token:STAFF_TOKEN,row:row,t:Date.now()});
+      el('msg').textContent=opts.silent?'กำลังตรวจคิวสลิป...':'กำลังให้ Gemini ตรวจสลิปใหม่...';
+      var res=await api({action:'staff_recheck_slip',staff_token:STAFF_TOKEN,row:row,force:opts.force?'TRUE':'',t:Date.now()});
       if(!res.ok) throw new Error(res.message||res.note||'ตรวจสลิปใหม่ไม่สำเร็จ');
-      el('msg').className='msg ok';
-      el('msg').textContent='ตรวจสลิปใหม่แล้ว: '+(res.status||'-')+(res.note?' — '+res.note:'');
-      await loadData();
+      if(!opts.silent){
+        el('msg').className='msg ok';
+        el('msg').textContent=(res.cached?'ใช้ผลเดิม: ':'ตรวจสลิปใหม่แล้ว: ')+(res.status||'-')+(res.note?' — '+res.note:'');
+        await loadData();
+      }
+      return res;
     }catch(e){
-      el('msg').className='msg err';
-      el('msg').textContent='ตรวจสลิปใหม่ไม่ได้: '+e.message;
+      if(!opts.silent){
+        el('msg').className='msg err';
+        el('msg').textContent='ตรวจสลิปใหม่ไม่ได้: '+e.message;
+      }
+      return {ok:false,message:e.message};
+    }
+  }
+
+  async function recheckPendingQueue(){
+    var btn=el('btnQueue');
+    var candidates=DATA.filter(function(x){return isPendingSlipStatus(x.slip_check_status)});
+    var seen={};
+    candidates=candidates.filter(function(x){
+      var key=String(x.group_ref||'') || ('ROW-'+x.row);
+      if(seen[key]) return false;
+      seen[key]=true;
+      return true;
+    });
+    if(!candidates.length){
+      el('msg').className='msg ok';
+      el('msg').textContent='ไม่มีรายการรอตรวจสลิปแล้ว';
+      return;
+    }
+    if(!confirm('ตรวจสลิปที่รอตรวจ '+candidates.length+' รายการ/กลุ่ม? ระบบจะตรวจทีละรายการเพื่อกัน Gemini 429')) return;
+    var oldText=btn.textContent;
+    btn.disabled=true;
+    btn.textContent='กำลังตรวจ...';
+    var ok=0, fail=0, rate=0;
+    try{
+      if(el('autoRefresh').checked){el('autoRefresh').checked=false;toggleAuto();}
+      for(var i=0;i<candidates.length;i++){
+        var item=candidates[i];
+        el('msg').className='msg';
+        el('msg').textContent='กำลังตรวจสลิป '+(i+1)+'/'+candidates.length+' : '+(item.final_name||item.phone||item.group_ref||item.row);
+        var res=await recheckSlip(item.row,{silent:true});
+        if(res&&res.ok){ok++; if(String(res.status||'').toUpperCase()==='GEMINI_RATE_LIMIT') rate++;}
+        else fail++;
+        await sleep(3500);
+      }
+      el('msg').className=rate?'msg err':'msg ok';
+      el('msg').textContent='ตรวจคิวเสร็จ: สำเร็จ '+ok+' / ไม่สำเร็จ '+fail+(rate?' / ติด rate limit '+rate+' รายการ ให้รอแล้วกดต่อ':'');
+      await loadData();
+    }finally{
+      btn.disabled=false;
+      btn.textContent=oldText;
     }
   }
 
