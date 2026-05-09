@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Staff Dashboard v5 Pro</title>
+  <title>Staff Dashboard v6 Pro</title>
   <style>
     :root{
       --bg:#f8f6ef;--card:#ffffff;--ink:#101827;--muted:#667085;--line:#e7e3da;
@@ -37,10 +37,11 @@
 
     @media(max-width:1120px){.thead{display:none}.table-card{background:transparent;border:0;box-shadow:none;display:grid;gap:10px}.row{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:0 8px 22px rgba(16,24,39,.05)}.row>div:before{content:attr(data-label);display:block;font-size:10px;color:#94a3b8;font-weight:1000;margin-bottom:4px}.name:before,.actions:before{display:none!important}.actions{grid-column:1/-1;justify-content:flex-start}.actions .btn,.openlink{flex:1}.note{grid-column:1/-1}}
     @media(max-width:760px){.topbar-inner{padding:12px}.brand b{font-size:16px}.logo{width:38px;height:38px}.wrap{padding:12px}.hero{border-radius:20px;flex-direction:column}.stats{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}.row{grid-template-columns:1fr}.actions .btn,.openlink{width:100%}}
-  </style>
+  .slipImg{display:block;max-width:100%;max-height:72vh;margin:0 auto;object-fit:contain}.slipHint{padding:8px 12px;background:#fff7dc;border-bottom:1px solid #f2dfaa;font-size:12px;font-weight:800;color:#92400e}
+</style>
 </head>
 <body>
-  <div class="topbar"><div class="topbar-inner"><div class="brand"><div class="logo">LP</div><div><b>Staff Dashboard v5</b><span>ตรวจสลิป / อนุมัติกลุ่ม / ดูสลิป popup / auto refresh</span></div></div><button class="btn btn-yellow" onclick="loadData()">รีเฟรช</button></div></div>
+  <div class="topbar"><div class="topbar-inner"><div class="brand"><div class="logo">LP</div><div><b>Staff Dashboard v6</b><span>ตรวจสลิป / อนุมัติกลุ่ม / ดูสลิป popup แก้ 403 / auto refresh</span></div></div><button class="btn btn-yellow" onclick="loadData()">รีเฟรช</button></div></div>
   <div class="wrap">
     <section class="hero"><div><small>ACTIVE EVENT</small><h1 id="eventName">กำลังโหลด...</h1><p id="eventSub">ระบบจะดึงรายการล่าสุดจาก Google Sheet</p></div><div class="pill-live">● พร้อมใช้งาน</div></section>
     <section class="stats" id="summary"></section>
@@ -96,11 +97,48 @@
   function clearFilters(){el('q').value='';el('statusFilter').value='';el('slipFilter').value='';document.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('active',c.dataset.slip==='')});render()}
   function quickSlip(btn,val){el('slipFilter').value=val;document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active')});btn.classList.add('active');render()}
 
+  function getDriveFileId(url){
+    url=String(url||'');
+    var m=url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if(m&&m[1]) return m[1];
+    m=url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if(m&&m[1]) return m[1];
+    return '';
+  }
+
+  function drivePreviewUrl(url){
+    var id=getDriveFileId(url);
+    if(!id) return url;
+    return 'https://drive.google.com/file/d/'+id+'/preview';
+  }
+
+  function driveThumbUrl(url){
+    var id=getDriveFileId(url);
+    if(!id) return url;
+    return 'https://drive.google.com/thumbnail?id='+id+'&sz=w1600';
+  }
+
   function openSlipModal(url,title){
+    url=String(url||'');
     el('modalTitle').textContent='สลิป: '+(title||'');
     el('openNewTab').href=url;
-    var isImg=/\.(jpg|jpeg|png|webp)(\?|$)/i.test(url) || url.indexOf('drive.google.com')>-1;
-    el('modalBody').innerHTML='<iframe src="'+esc(url)+'" loading="lazy"></iframe>';
+
+    var id=getDriveFileId(url);
+    var isPdf=/\.pdf(\?|$)/i.test(url);
+    var isDrive=!!id || url.indexOf('drive.google.com')>-1;
+    var html='';
+
+    if(isDrive && !isPdf){
+      html='<div class="slipHint">ถ้ารูปไม่ขึ้น ให้กดปุ่ม “เปิดแท็บใหม่” ด้านบน</div>'
+        +'<img class="slipImg" src="'+esc(driveThumbUrl(url))+'" alt="slip" loading="lazy" onerror="this.style.display=\'none\';document.getElementById(\'drivePreviewFallback\').style.display=\'block\';">'
+        +'<div id="drivePreviewFallback" style="display:none;height:70vh"><iframe src="'+esc(drivePreviewUrl(url))+'" loading="lazy"></iframe></div>';
+    } else if(isDrive){
+      html='<iframe src="'+esc(drivePreviewUrl(url))+'" loading="lazy"></iframe>';
+    } else {
+      html='<iframe src="'+esc(url)+'" loading="lazy"></iframe>';
+    }
+
+    el('modalBody').innerHTML=html;
     el('slipModal').classList.add('show');
   }
   function closeSlipModal(){el('slipModal').classList.remove('show');el('modalBody').innerHTML=''}
