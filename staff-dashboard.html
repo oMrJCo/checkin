@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Staff Dashboard v4 Compact</title>
+  <title>Staff Dashboard v5 Pro</title>
   <style>
     :root{
       --bg:#f8f6ef;--card:#ffffff;--ink:#101827;--muted:#667085;--line:#e7e3da;
@@ -30,24 +30,32 @@
     .quick{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 10px}.chip{border:1px solid var(--line);background:#fff;color:#334155;border-radius:999px;padding:8px 12px;font-weight:1000;cursor:pointer;font-size:13px}.chip.active{background:#101827;color:#fff;border-color:#101827}
     .msg{font-size:12px;font-weight:900;margin:0 0 8px;color:#166534}.msg.err{color:#b91c1c}
     .table-card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}.thead,.row{display:grid;grid-template-columns:minmax(170px,1.4fr) minmax(150px,1.05fr) 90px 82px 118px 105px 112px 95px 188px;gap:8px;align-items:center}.thead{position:static;background:#fbfaf6;border-bottom:1px solid var(--line);padding:9px 12px;color:#667085;font-size:10px;font-weight:1000;text-transform:uppercase}.row{min-height:62px;padding:9px 12px;border-bottom:1px solid #f0ede6}.row:last-child{border-bottom:0}.row:hover{background:#fffdf5}.name b{display:block;font-size:13px;line-height:1.15}.name span,.subtxt{display:block;color:var(--muted);font-size:10.5px;font-weight:800;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.amount{font-weight:1000;font-size:13px}.badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 8px;font-size:10.5px;font-weight:1000;border:1px solid rgba(0,0,0,.07);white-space:nowrap;line-height:1.1}.dot{width:6px;height:6px;border-radius:999px}.b-yellow{background:#fff7d6;color:#92400e}.b-yellow .dot{background:#f59e0b}.b-green{background:#dcfce7;color:#166534}.b-green .dot{background:#16a34a}.b-red{background:#fee2e2;color:#991b1b}.b-red .dot{background:#dc2626}.b-orange{background:#ffedd5;color:#9a3412}.b-orange .dot{background:#ea580c}.b-blue{background:#dbeafe;color:#1e40af}.b-blue .dot{background:#2563eb}.b-gray{background:#f1f5f9;color:#475569}.b-gray .dot{background:#64748b}.actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:nowrap}.actions .btn{padding:7px 8px;border-radius:10px;font-size:11px;line-height:1;min-width:auto}.openlink{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.note{grid-column:1/-1;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:7px 10px;color:#9a3412;font-weight:900;font-size:11px}.empty{padding:28px;text-align:center;color:var(--muted);font-weight:1000}
+
+    .groupbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:8px 10px;margin:0 0 10px;box-shadow:0 6px 18px rgba(16,24,39,.04)}
+    .groupbar-left{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.groupbar small{color:var(--muted);font-weight:900}.toggle{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:1000;color:#334155}.toggle input{width:auto;height:auto}
+    .modal{position:fixed;inset:0;background:rgba(15,23,42,.72);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}.modal.show{display:flex}.modal-card{width:min(920px,96vw);height:min(88vh,760px);background:#fff;border-radius:22px;box-shadow:0 28px 80px rgba(0,0,0,.35);overflow:hidden;display:flex;flex-direction:column}.modal-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}.modal-title{font-weight:1000}.modal-body{flex:1;background:#f8fafc;display:grid;place-items:center;overflow:hidden}.modal-body iframe,.modal-body img{width:100%;height:100%;border:0;object-fit:contain;background:#fff}.modal-actions{display:flex;gap:8px;flex-wrap:wrap}.tiny{padding:8px 10px!important;font-size:12px!important;border-radius:11px!important}
+
     @media(max-width:1120px){.thead{display:none}.table-card{background:transparent;border:0;box-shadow:none;display:grid;gap:10px}.row{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:0 8px 22px rgba(16,24,39,.05)}.row>div:before{content:attr(data-label);display:block;font-size:10px;color:#94a3b8;font-weight:1000;margin-bottom:4px}.name:before,.actions:before{display:none!important}.actions{grid-column:1/-1;justify-content:flex-start}.actions .btn,.openlink{flex:1}.note{grid-column:1/-1}}
     @media(max-width:760px){.topbar-inner{padding:12px}.brand b{font-size:16px}.logo{width:38px;height:38px}.wrap{padding:12px}.hero{border-radius:20px;flex-direction:column}.stats{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}.row{grid-template-columns:1fr}.actions .btn,.openlink{width:100%}}
   </style>
 </head>
 <body>
-  <div class="topbar"><div class="topbar-inner"><div class="brand"><div class="logo">LP</div><div><b>Staff Dashboard v4</b><span>ตรวจสลิป / อนุมัติ / ดูรายชื่อแบบแถวเดียว</span></div></div><button class="btn btn-yellow" onclick="loadData()">รีเฟรช</button></div></div>
+  <div class="topbar"><div class="topbar-inner"><div class="brand"><div class="logo">LP</div><div><b>Staff Dashboard v5</b><span>ตรวจสลิป / อนุมัติกลุ่ม / ดูสลิป popup / auto refresh</span></div></div><button class="btn btn-yellow" onclick="loadData()">รีเฟรช</button></div></div>
   <div class="wrap">
     <section class="hero"><div><small>ACTIVE EVENT</small><h1 id="eventName">กำลังโหลด...</h1><p id="eventSub">ระบบจะดึงรายการล่าสุดจาก Google Sheet</p></div><div class="pill-live">● พร้อมใช้งาน</div></section>
     <section class="stats" id="summary"></section>
     <section class="filters"><div><label>ค้นหา</label><input id="q" placeholder="ชื่อ / เบอร์ / Facebook / Line / group_ref" oninput="render()"></div><div><label>สถานะอนุมัติ</label><select id="statusFilter" onchange="render()"><option value="">ทั้งหมด</option><option value="pending">รออนุมัติ</option><option value="approved">อนุมัติแล้ว</option><option value="rejected">ไม่ผ่าน</option></select></div><div><label>สถานะสลิป</label><select id="slipFilter" onchange="render()"><option value="">ทั้งหมด</option><option value="PASS_BASIC">ผ่านเบื้องต้น</option><option value="WAITING_CHECK">รอตรวจ</option><option value="AMOUNT_MISMATCH">ยอดไม่ตรง</option><option value="FILE_ERROR">ไฟล์มีปัญหา</option><option value="NEED_RESUBMIT">ขอส่งใหม่</option><option value="REJECTED">ไม่ผ่าน</option></select></div><button class="btn btn-light" onclick="clearFilters()">ล้างตัวกรอง</button></section>
     <div class="quick"><button class="chip active" data-slip="" onclick="quickSlip(this,'')">ทั้งหมด</button><button class="chip" data-slip="WAITING_CHECK" onclick="quickSlip(this,'WAITING_CHECK')">รอตรวจสลิป</button><button class="chip" data-slip="PASS_BASIC" onclick="quickSlip(this,'PASS_BASIC')">ผ่านเบื้องต้น</button><button class="chip" data-slip="AMOUNT_MISMATCH" onclick="quickSlip(this,'AMOUNT_MISMATCH')">ยอดไม่ตรง</button><button class="chip" data-slip="FILE_ERROR" onclick="quickSlip(this,'FILE_ERROR')">ไฟล์มีปัญหา</button></div>
+    <div class="groupbar"><div class="groupbar-left"><button class="btn btn-dark tiny" onclick="approveVisibleGroups()">อนุมัติทั้งกลุ่มที่เห็น</button><button class="btn btn-light tiny" onclick="showOnlyProblem()">ดูเฉพาะสลิปมีปัญหา</button><small id="autoInfo">Auto refresh: เปิด</small></div><label class="toggle"><input id="autoRefresh" type="checkbox" checked onchange="toggleAuto()"> รีเฟรชอัตโนมัติ</label></div>
     <p id="msg" class="msg"></p>
     <section class="table-card" id="table"><div class="empty">กำลังโหลดข้อมูล...</div></section>
   </div>
+<div class="modal" id="slipModal" onclick="modalBackdrop(event)"><div class="modal-card"><div class="modal-head"><div class="modal-title" id="modalTitle">ดูสลิป</div><div class="modal-actions"><a id="openNewTab" class="btn btn-light tiny" target="_blank">เปิดแท็บใหม่</a><button class="btn btn-dark tiny" onclick="closeSlipModal()">ปิด</button></div></div><div class="modal-body" id="modalBody"></div></div></div>
 <script>
   var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZoooaEtBsLKUm3ppv-AIVipnC2w2WptAx5YHYwkfLZSTwIuMT7NRy0nHGZjY-AjSF/exec";
   var STAFF_TOKEN = "LEEPLUS_CHECKIN_2026";
   var DATA = [];
+  var AUTO_TIMER = null;
   function el(id){return document.getElementById(id)}
   function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function money(n){n=Number(String(n||0).replace(/[^0-9.]/g,''))||0;return '฿'+n.toLocaleString('th-TH')}
@@ -60,10 +68,80 @@
   function renderSummary(s){var keys=['total','pending','approved','rejected','checked_in','slip_problem'];var labels=['ทั้งหมด','รอตรวจ','อนุมัติ','ไม่ผ่าน','เช็กอิน','สลิปมีปัญหา'];el('summary').innerHTML=keys.map(function(k,i){return '<div class="stat"><small>'+labels[i]+'</small><b>'+(s[k]||0)+'</b></div>'}).join('')}
   function getFiltered(){var q=el('q').value.trim().toLowerCase();var sf=el('statusFilter').value;var sl=el('slipFilter').value;return DATA.filter(function(x){var hay=[x.final_name,x.phone,x.facebook,x.lineId,x.group_ref,x.group_leader_phone,x.claim_code].join(' ').toLowerCase(); if(q&&hay.indexOf(q)===-1)return false; if(sf&&String(x.reg_status||'').toLowerCase()!==sf)return false; if(sl&&String(x.slip_check_status||'WAITING_CHECK').toUpperCase()!==sl)return false; return true})}
   function render(){var arr=getFiltered(); if(!arr.length){el('table').innerHTML='<div class="empty">ไม่พบรายการตามตัวกรอง</div>';return} el('table').innerHTML='<div class="thead"><div>รายชื่อ</div><div>เบอร์ / กลุ่ม</div><div>ยอด</div><div>ไซส์</div><div>สลิป</div><div>อนุมัติ</div><div>เช็กอิน</div><div>รับเสื้อ</div><div>จัดการ</div></div>'+arr.map(rowHtml).join('')}
-  function rowHtml(x){var slipUrl=x.preview_url||x.file_url||'';var amount=x.deposit||x.payment_total||0;var group=x.group_size&&Number(x.group_size)>1?x.group_size+' คน · '+(x.group_ref||'-'):(x.group_ref||'เดี่ยว');var note=x.slip_check_note?'<div class="note">หมายเหตุสลิป: '+esc(x.slip_check_note)+'</div>':'';return '<div class="row"><div class="name"><b>'+esc(x.final_name||'-')+'</b><span>'+esc(x.facebook||'-')+' · Line: '+esc(x.lineId||'-')+'</span></div><div data-label="เบอร์ / กลุ่ม"><b>'+esc(x.phone||'-')+'</b><span class="subtxt">'+esc(group)+'</span></div><div data-label="ยอด" class="amount">'+money(amount)+'</div><div data-label="ไซส์"><b>'+esc(x.shirt_size||'-')+'</b><span class="subtxt">แถว '+esc(x.row||'-')+'</span></div><div data-label="สลิป">'+slipBadge(x.slip_check_status)+'</div><div data-label="อนุมัติ">'+approveBadge(x.reg_status)+'</div><div data-label="เช็กอิน">'+checkBadge(x.checkin_status)+'</div><div data-label="รับเสื้อ">'+giftBadge(x.gift_status)+'</div><div class="actions">'+(slipUrl?'<a class="btn btn-dark openlink" target="_blank" href="'+esc(slipUrl)+'">สลิป</a>':'<button class="btn btn-light" disabled>ไม่มีสลิป</button>')+'<button class="btn btn-green" onclick="updateStatus('+x.row+',\'approved\')">อนุมัติ</button><button class="btn btn-red" onclick="updateStatus('+x.row+',\'rejected\')">ไม่ผ่าน</button><button class="btn btn-orange" onclick="updateStatus('+x.row+',\'pending\')">รอตรวจ</button></div>'+note+'</div>'}
+  function rowHtml(x){
+    var slipUrl=x.preview_url||x.file_url||'';
+    var amount=x.deposit||x.payment_total||0;
+    var group=x.group_size&&Number(x.group_size)>1?x.group_size+' คน · '+(x.group_ref||'-'):(x.group_ref||'เดี่ยว');
+    var note=x.slip_check_note?'<div class="note">หมายเหตุสลิป: '+esc(x.slip_check_note)+'</div>':'';
+    var groupBtn=(x.group_ref&&Number(x.group_size||1)>1)?'<button class="btn btn-light" onclick="approveGroup(\''+esc(x.group_ref)+'\')">อนุมัติกลุ่ม</button>':'';
+    return '<div class="row">'
+      +'<div class="name"><b>'+esc(x.final_name||'-')+'</b><span>'+esc(x.facebook||'-')+' · Line: '+esc(x.lineId||'-')+'</span></div>'
+      +'<div data-label="เบอร์ / กลุ่ม"><b>'+esc(x.phone||'-')+'</b><span class="subtxt">'+esc(group)+'</span></div>'
+      +'<div data-label="ยอด" class="amount">'+money(amount)+'</div>'
+      +'<div data-label="ไซส์"><b>'+esc(x.shirt_size||'-')+'</b><span class="subtxt">แถว '+esc(x.row||'-')+'</span></div>'
+      +'<div data-label="สลิป">'+slipBadge(x.slip_check_status)+'</div>'
+      +'<div data-label="อนุมัติ">'+approveBadge(x.reg_status)+'</div>'
+      +'<div data-label="เช็กอิน">'+checkBadge(x.checkin_status)+'</div>'
+      +'<div data-label="รับเสื้อ">'+giftBadge(x.gift_status)+'</div>'
+      +'<div class="actions">'
+      +(slipUrl?'<button class="btn btn-dark" onclick="openSlipModal(\''+esc(slipUrl)+'\',\''+esc(x.final_name||'ดูสลิป')+'\')">ดูสลิป</button>':'<button class="btn btn-light" disabled>ไม่มีสลิป</button>')
+      +'<button class="btn btn-green" onclick="updateStatus('+x.row+',\'approved\')">อนุมัติ</button>'
+      +'<button class="btn btn-red" onclick="updateStatus('+x.row+',\'rejected\')">ไม่ผ่าน</button>'
+      +'<button class="btn btn-orange" onclick="updateStatus('+x.row+',\'pending\')">รอตรวจ</button>'
+      +groupBtn
+      +'</div>'+note+'</div>'
+  }
+
   async function updateStatus(row,status){var note=''; if(status==='rejected') note=prompt('ใส่หมายเหตุไม่ผ่าน (เว้นว่างได้)','')||''; try{el('msg').className='msg';el('msg').textContent='กำลังอัปเดต...';var res=await api({action:'staff_update_status',staff_token:STAFF_TOKEN,row:row,status:status,note:note}); if(!res.ok)throw new Error(res.message||'อัปเดตไม่สำเร็จ'); await loadData()}catch(e){el('msg').className='msg err';el('msg').textContent=e.message}}
   function clearFilters(){el('q').value='';el('statusFilter').value='';el('slipFilter').value='';document.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('active',c.dataset.slip==='')});render()}
   function quickSlip(btn,val){el('slipFilter').value=val;document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active')});btn.classList.add('active');render()}
+
+  function openSlipModal(url,title){
+    el('modalTitle').textContent='สลิป: '+(title||'');
+    el('openNewTab').href=url;
+    var isImg=/\.(jpg|jpeg|png|webp)(\?|$)/i.test(url) || url.indexOf('drive.google.com')>-1;
+    el('modalBody').innerHTML='<iframe src="'+esc(url)+'" loading="lazy"></iframe>';
+    el('slipModal').classList.add('show');
+  }
+  function closeSlipModal(){el('slipModal').classList.remove('show');el('modalBody').innerHTML=''}
+  function modalBackdrop(e){if(e.target&&e.target.id==='slipModal')closeSlipModal()}
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSlipModal()});
+
+  async function approveGroup(groupRef){
+    var rows=DATA.filter(function(x){return String(x.group_ref||'')===String(groupRef||'')}).map(function(x){return x.row});
+    if(!rows.length)return;
+    if(!confirm('อนุมัติทั้งกลุ่ม '+groupRef+' จำนวน '+rows.length+' รายการ?'))return;
+    el('msg').className='msg'; el('msg').textContent='กำลังอนุมัติทั้งกลุ่ม...';
+    try{
+      for(var i=0;i<rows.length;i++){
+        var res=await api({action:'staff_update_status',staff_token:STAFF_TOKEN,row:rows[i],status:'approved',note:'approved by group'});
+        if(!res.ok) throw new Error(res.message||('อัปเดตแถว '+rows[i]+' ไม่สำเร็จ'));
+      }
+      await loadData();
+    }catch(e){el('msg').className='msg err';el('msg').textContent=e.message}
+  }
+  async function approveVisibleGroups(){
+    var arr=getFiltered();
+    var groups={};
+    arr.forEach(function(x){ if(x.group_ref && Number(x.group_size||1)>1) groups[x.group_ref]=true; });
+    var refs=Object.keys(groups);
+    if(!refs.length){el('msg').textContent='ไม่มีรายการกลุ่มในหน้าที่เห็น';return}
+    if(!confirm('อนุมัติกลุ่มที่เห็นทั้งหมด '+refs.length+' กลุ่ม?'))return;
+    for(var i=0;i<refs.length;i++){ await approveGroup(refs[i]); }
+  }
+  function showOnlyProblem(){
+    el('statusFilter').value='';
+    el('slipFilter').value='AMOUNT_MISMATCH';
+    document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active')});
+    render();
+  }
+  function toggleAuto(){
+    if(AUTO_TIMER){clearInterval(AUTO_TIMER);AUTO_TIMER=null;}
+    if(el('autoRefresh').checked){AUTO_TIMER=setInterval(loadData,30000);el('autoInfo').textContent='Auto refresh: เปิด';}
+    else{el('autoInfo').textContent='Auto refresh: ปิด';}
+  }
+  toggleAuto();
+
   loadData();
 </script>
 </body>
